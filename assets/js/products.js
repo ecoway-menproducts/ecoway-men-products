@@ -11,7 +11,7 @@ const PRODUCTS = [
     description: 'عطر رجالي فاخر بتركيبة منعشة تجمع بين نفحات الحمضيات والأخشاب. مثالي للاستخدام اليومي والمناسبات الرسمية.',
     notes: { top: 'برغموت، ليمون', middle: 'لافندر، فلفل', base: 'أرز، خشب الصندل' },
     inStock: true,
-    image: 'assets/images/placeholder.svg',
+    image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
@@ -23,7 +23,7 @@ const PRODUCTS = [
     description: 'عطر ليلي جريء يعكس ثقة الرجل العصري. نفحات دافئة من العنبر والمسك.',
     notes: { top: 'كارداموم، زعفران', middle: 'ورد، عنبر', base: 'مسك، فانيليا' },
     inStock: true,
-    image: 'assets/images/placeholder.svg',
+    image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
@@ -35,7 +35,7 @@ const PRODUCTS = [
     description: 'رائحة خشبية كلاسيكية مستوحاة من غابات الصنوبر. ثبات عالٍ وفوحان مميز.',
     notes: { top: 'صنوبر، إكليل الجبل', middle: 'أرز، باتشولي', base: 'جلد، عنبر رمادي' },
     inStock: true,
-    image: 'assets/images/placeholder.svg',
+    image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
@@ -46,7 +46,7 @@ const PRODUCTS = [
     compareAt: null,
     description: 'بخاخ جسم خفيف للاستخدام اليومي. منعش ومناسب بعد الرياضة أو العمل.',
     inStock: true,
-    image: 'assets/images/placeholder.svg',
+    image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
@@ -57,7 +57,7 @@ const PRODUCTS = [
     compareAt: null,
     description: 'كريم حلاقة غني بالألوفيرا يهدئ البشرة ويمنع الاحمرار. مناسب لجميع أنواع البشرة.',
     inStock: true,
-    image: 'assets/images/placeholder.svg',
+    image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
@@ -68,7 +68,7 @@ const PRODUCTS = [
     compareAt: 110,
     description: 'جل ترطيب خفيف سريع الامتصاص. يحمي البشرة من الجفاف طوال اليوم.',
     inStock: true,
-    image: 'assets/images/placeholder.svg',
+    image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
@@ -79,7 +79,7 @@ const PRODUCTS = [
     compareAt: null,
     description: 'لوشن مهدئ يغلق المسام ويرطب البشرة بعد الحلاقة. برائحة منعشة خفيفة.',
     inStock: true,
-    image: 'assets/images/placeholder.svg',
+    image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
@@ -90,7 +90,7 @@ const PRODUCTS = [
     compareAt: null,
     description: 'غسول وجه بالفحم المنشط لتنظيف عميق وإزالة الشوائب والزيوت الزائدة.',
     inStock: true,
-    image: 'assets/images/placeholder.svg',
+    image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
@@ -101,7 +101,7 @@ const PRODUCTS = [
     compareAt: null,
     description: 'منظف قوي وآمن على الأسطح. فعال ضد الدهون والبقع مع رائحة منعشة.',
     inStock: true,
-    image: 'assets/images/placeholder.svg',
+    image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
@@ -112,7 +112,7 @@ const PRODUCTS = [
     compareAt: null,
     description: 'معطر جو برائحة خشبية رجالية. يدوم طويلاً ومناسب للمنزل والمكتب.',
     inStock: true,
-    image: 'assets/images/placeholder.svg',
+    image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
@@ -123,7 +123,7 @@ const PRODUCTS = [
     compareAt: null,
     description: 'سائل غسيل مركز يزيل الدهون بسرعة مع حماية اليدين. اقتصادي في الاستخدام.',
     inStock: true,
-    image: 'assets/images/placeholder.svg',
+    image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
@@ -134,7 +134,7 @@ const PRODUCTS = [
     compareAt: 780,
     description: 'باكدج متكامل يشمل: عطر + جل وجه + لوشن ما بعد الحلاقة + بخاخ جسم. توفير 17%.',
     inStock: true,
-    image: 'assets/images/placeholder.svg',
+    image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
@@ -145,7 +145,7 @@ const PRODUCTS = [
     compareAt: 550,
     description: 'باكدج يجمع عطر نايت كينج مع بخاخ الجسم الأسود ولوشن ما بعد الحلاقة.',
     inStock: true,
-    image: 'assets/images/placeholder.svg',
+    image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
@@ -156,7 +156,7 @@ const PRODUCTS = [
     compareAt: null,
     description: 'باكدج مثالي للتجربة الأولى: غسول فحم + جل وجه + بخاخ جسم بسعر مميز.',
     inStock: true,
-    image: 'assets/images/placeholder.svg',
+    image: 'assets/images/placeholder.png',
     reviews: []
   }
 ];
