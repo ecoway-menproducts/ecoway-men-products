@@ -49,8 +49,7 @@ function doPost(e) {
       data.paymentMethod || 'COD'
     ]);
 
-  // اختياري: إرسال إشعار بريد عند كل طلب جديد
-  // sendOrderEmail(data, productsText);
+    sendOrderEmail(data, productsText);
 
     return jsonResponse({ success: true, message: 'تم استلام الطلب' });
 

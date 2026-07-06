@@ -14,7 +14,7 @@ const SITE_CONFIG = {
   paymentMethod: 'الدفع عند الاستلام (COD)',
   year: new Date().getFullYear(),
   // استبدل هذا الرابط برابط Google Apps Script الخاص بك
-  orderEndpoint: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec',
+  orderEndpoint: 'https://script.google.com/macros/s/AKfycbxCyaysYLZv3II3A6N3p73N-EmS5yKtGOidEKcTnPtsoIe0mtg0jyv8M8v0fS0FUWKPSw/exec',
   basePath: (function () {
     const path = window.location.pathname;
     if (path.includes('/ecoway-men-products')) {
