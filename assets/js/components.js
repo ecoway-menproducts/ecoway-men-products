@@ -6,7 +6,7 @@ function renderHeader(activePage) {
   return (
     '<header class="header">' +
       '<div class="header__announce">' +
-        '<span>🚚 توصيل خلال ' + SITE_CONFIG.deliveryDays + ' — الدفع عند الاستلام</span>' +
+        '<span>🚚 توصيل خلال ' + SITE_CONFIG.deliveryDays + ' — الدفع عند الاستلام (توصيل مجاني للطلبات أكثر من ' + SITE_CONFIG.freeShippingMin.toLocaleString('ar-EG') + ' جنيه)</span>' +
       '</div>' +
       '<div class="header__main container">' +
         '<a href="' + pagePath('index.html') + '" class="header__logo" aria-label="' + SITE_CONFIG.name + '">' +

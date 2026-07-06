@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '<div class="payment-info">' +
           '<span>💵 ' + SITE_CONFIG.paymentMethod + '</span>' +
           '<span>🚚 توصيل ' + SITE_CONFIG.deliveryDays + '</span>' +
-          '<span>📦 شحن ' + SITE_CONFIG.shippingCost + ' ' + SITE_CONFIG.currency + '</span>' +
+          '<span>📦 شحن ' + formatShippingCost(SITE_CONFIG.shippingCost) + ' — مجاني فوق ' + SITE_CONFIG.freeShippingMin.toLocaleString('ar-EG') + ' ' + SITE_CONFIG.currency + '</span>' +
         '</div>' +
       '</div>' +
     '</div>' +

@@ -3,14 +3,15 @@
  */
 const SITE_CONFIG = {
   name: 'Ecoway Men Products',
-  nameAr: 'إيكواي — منتجات رجالية',
-  tagline: 'عناية رجالية أصيلة بجودة إيكواي',
+  nameAr: 'Ecoway — منتجات رجالية',
+  tagline: 'عناية رجالية أصيلة بجودة Ecoway',
   email: 'ecowaymenproducts@gmail.com',
   whatsapp: '01157563840',
   whatsappIntl: '201157563840',
   currency: 'ج.م',
   shippingCost: 60,
-  deliveryDays: '3–5 أيام',
+  freeShippingMin: 1000,
+  deliveryDays: '4–7 أيام',
   paymentMethod: 'الدفع عند الاستلام (COD)',
   year: new Date().getFullYear(),
   // استبدل هذا الرابط برابط Google Apps Script الخاص بك
@@ -35,6 +36,6 @@ const GOVERNORATES = [
 const CATEGORIES = [
   { id: 'perfumes', name: 'عطور رجالي', icon: '🌿' },
   { id: 'skincare', name: 'عناية بالبشرة للرجال', icon: '✨' },
-  { id: 'home', name: 'منظفات وعناية منزلية', icon: '🏠' },
+  { id: 'home', name: 'منتجات لعربيتك', icon: '🚗' },
   { id: 'packages', name: 'باكدجات', icon: '🎁' }
 ];

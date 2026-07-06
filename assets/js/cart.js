@@ -76,8 +76,13 @@ const Cart = {
     return this.get().reduce(function (sum, i) { return sum + i.price * i.quantity; }, 0);
   },
 
+  getShippingCost: function () {
+    if (this.getSubtotal() >= SITE_CONFIG.freeShippingMin) return 0;
+    return SITE_CONFIG.shippingCost;
+  },
+
   getTotal: function (shipping) {
-    return this.getSubtotal() + (shipping || 0);
+    return this.getSubtotal() + (shipping != null ? shipping : this.getShippingCost());
   },
 
   updateBadge: function () {

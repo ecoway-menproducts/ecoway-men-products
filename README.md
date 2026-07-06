@@ -1,6 +1,6 @@
 # Ecoway Men Products
 
-متجر إلكتروني عربي RTL لمنتجات إيكواي الرجالية — HTML/CSS/JS خالص، متوافق مع GitHub Pages.
+متجر إلكتروني عربي RTL لمنتجات Ecoway الرجالية — HTML/CSS/JS خالص، متوافق مع GitHub Pages.
 
 ## الصفحات
 

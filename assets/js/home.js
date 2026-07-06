@@ -41,7 +41,7 @@ function initHeroSlider() {
   if (!slides.length) return;
 
   var current = 0;
-  var interval = 4500;
+  var interval = 8000;
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function clearTimer() {

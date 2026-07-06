@@ -41,12 +41,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }).join('');
 
     var subtotal = Cart.getSubtotal();
+    var shipping = Cart.getShippingCost();
     summaryEl.innerHTML =
       '<h3>ملخص الطلب</h3>' +
       '<div class="summary-row"><span>المجموع الفرعي</span><span>' + formatPrice(subtotal) + '</span></div>' +
-      '<div class="summary-row"><span>الشحن (تقديري)</span><span>' + formatPrice(SITE_CONFIG.shippingCost) + '</span></div>' +
-      '<div class="summary-row summary-row--total"><span>الإجمالي</span><span>' + formatPrice(Cart.getTotal(SITE_CONFIG.shippingCost)) + '</span></div>' +
-      '<p class="shipping-note">💡 سيتم تحديد سعر الشحن النهائي حسب المحافظة عند إتمام الطلب. التوصيل خلال ' + SITE_CONFIG.deliveryDays + '.</p>' +
+      '<div class="summary-row"><span>الشحن (تقديري)</span><span>' + formatShippingCost(shipping) + '</span></div>' +
+      '<div class="summary-row summary-row--total"><span>الإجمالي</span><span>' + formatPrice(Cart.getTotal(shipping)) + '</span></div>' +
+      '<p class="shipping-note">💡 التوصيل خلال ' + SITE_CONFIG.deliveryDays + '. توصيل مجاني للطلبات أكثر من ' + SITE_CONFIG.freeShippingMin.toLocaleString('ar-EG') + ' جنيه.</p>' +
       '<a href="' + pagePath('checkout.html') + '" class="btn btn--primary btn--block btn--lg mt-16">إتمام الطلب</a>' +
       '<a href="' + pagePath('products.html') + '" class="btn btn--outline btn--block mt-16">متابعة التسوق</a>';
   }

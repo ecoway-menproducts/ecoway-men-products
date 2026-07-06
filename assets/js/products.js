@@ -94,34 +94,34 @@ const PRODUCTS = [
     reviews: []
   },
   {
-    id: 'home-multi-cleaner',
-    name: 'منظف متعدد الاستخدامات',
+    id: 'car-shampoo',
+    name: 'شامبو غسيل السيارات',
     category: 'home',
-    price: 65,
+    price: 85,
     compareAt: null,
-    description: 'منظف قوي وآمن على الأسطح. فعال ضد الدهون والبقع مع رائحة منعشة.',
+    description: 'شامبو مركز لغسيل هيكل السيارة بعمق دون الإضرار بالطلاء. رغوة غنية تزيل الأتربة والدهون بسهولة.',
     inStock: true,
     image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
-    id: 'home-men-freshener',
-    name: 'معطر جو رجالي',
+    id: 'car-freshener',
+    name: 'معطر سيارة Ecoway',
     category: 'home',
     price: 75,
     compareAt: null,
-    description: 'معطر جو برائحة خشبية رجالية. يدوم طويلاً ومناسب للمنزل والمكتب.',
+    description: 'معطر سيارة برائحة منعشة تدوم طويلاً. مناسب للتعليق أو التثبيت داخل المقصورة.',
     inStock: true,
     image: 'assets/images/placeholder.png',
     reviews: []
   },
   {
-    id: 'home-dish-liquid',
-    name: 'سائل غسيل الأطباق المركز',
+    id: 'car-interior-cleaner',
+    name: 'منظف داخلية السيارة',
     category: 'home',
-    price: 55,
-    compareAt: null,
-    description: 'سائل غسيل مركز يزيل الدهون بسرعة مع حماية اليدين. اقتصادي في الاستخدام.',
+    price: 95,
+    compareAt: 110,
+    description: 'منظف متعدد الاستخدامات للمقاعد والتابلوه والبلاستيك الداخلي. ينظف ويعطر دون ترك بقع.',
     inStock: true,
     image: 'assets/images/placeholder.png',
     reviews: []
@@ -190,6 +190,10 @@ function getRelatedProducts(productId, limit) {
 
 function formatPrice(amount) {
   return amount.toLocaleString('ar-EG') + ' ' + SITE_CONFIG.currency;
+}
+
+function formatShippingCost(amount) {
+  return amount === 0 ? 'مجاني' : formatPrice(amount);
 }
 
 function getDiscountPercent(price, compareAt) {

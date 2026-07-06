@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function renderSummary() {
     var items = Cart.get();
     var subtotal = Cart.getSubtotal();
-    var shipping = SITE_CONFIG.shippingCost;
+    var shipping = Cart.getShippingCost();
     var total = Cart.getTotal(shipping);
 
     var itemsHtml = items.map(function (item) {
@@ -33,16 +33,16 @@ document.addEventListener('DOMContentLoaded', function () {
       '<h3>ملخص الطلب</h3>' +
       itemsHtml +
       '<div class="summary-row"><span>المجموع الفرعي</span><span>' + formatPrice(subtotal) + '</span></div>' +
-      '<div class="summary-row"><span>الشحن</span><span id="shippingCost">' + formatPrice(shipping) + '</span></div>' +
+      '<div class="summary-row"><span>الشحن</span><span id="shippingCost">' + formatShippingCost(shipping) + '</span></div>' +
       '<div class="summary-row summary-row--total"><span>الإجمالي</span><span id="totalCost">' + formatPrice(total) + '</span></div>' +
-      '<p class="shipping-note">🚚 التوصيل خلال ' + SITE_CONFIG.deliveryDays + '<br>💵 ' + SITE_CONFIG.paymentMethod + '</p>';
+      '<p class="shipping-note">🚚 التوصيل خلال ' + SITE_CONFIG.deliveryDays + '<br>💵 ' + SITE_CONFIG.paymentMethod + '<br>🎁 توصيل مجاني للطلبات أكثر من ' + SITE_CONFIG.freeShippingMin.toLocaleString('ar-EG') + ' جنيه</p>';
   }
 
   renderSummary();
 
   governorateSelect.addEventListener('change', function () {
-    var shipping = SITE_CONFIG.shippingCost;
-    document.getElementById('shippingCost').textContent = formatPrice(shipping);
+    var shipping = Cart.getShippingCost();
+    document.getElementById('shippingCost').textContent = formatShippingCost(shipping);
     document.getElementById('totalCost').textContent = formatPrice(Cart.getTotal(shipping));
   });
 
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
     submitBtn.textContent = 'جاري إرسال الطلب...';
 
     var items = Cart.get();
-    var shipping = SITE_CONFIG.shippingCost;
+    var shipping = Cart.getShippingCost();
     var orderData = {
       customerName: form.customerName.value.trim(),
       phone: form.phone.value.trim(),
