@@ -250,14 +250,8 @@ function initLogoAnimation() {
 
   var text = SITE_CONFIG.name;
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var isCompact = window.innerWidth < 480;
 
-  if (reducedMotion || isCompact) {
-    if (isCompact) {
-      container.innerHTML = '';
-      if (cursor) cursor.hidden = true;
-      return;
-    }
+  if (reducedMotion) {
     container.innerHTML = '';
     for (var i = 0; i < text.length; i++) {
       var s = document.createElement('span');
