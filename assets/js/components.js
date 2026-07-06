@@ -9,9 +9,12 @@ function renderHeader(activePage) {
         '<span>🚚 توصيل خلال ' + SITE_CONFIG.deliveryDays + ' — الدفع عند الاستلام</span>' +
       '</div>' +
       '<div class="header__main container">' +
-        '<a href="' + pagePath('index.html') + '" class="header__logo">' +
-          '<span class="header__logo-icon">E</span>' +
-          '<span class="header__logo-text">' + SITE_CONFIG.name + '</span>' +
+        '<a href="' + pagePath('index.html') + '" class="header__logo" aria-label="' + SITE_CONFIG.name + '">' +
+          '<span class="header__logo-animated" aria-hidden="true">' +
+            '<span class="logo-typed"></span>' +
+            '<span class="logo-cursor"></span>' +
+          '</span>' +
+          '<span class="header__logo-icon" aria-hidden="true"><span class="header__logo-letter">E</span></span>' +
         '</a>' +
         '<nav class="header__nav" aria-label="التنقل الرئيسي">' +
           '<a href="' + pagePath('index.html') + '" class="' + (activePage === 'home' ? 'active' : '') + '">الرئيسية</a>' +
@@ -196,6 +199,103 @@ function initCommonUI(activePage) {
   });
 
   Cart.updateBadge();
+  initLogoAnimation();
+}
+
+var _logoAnimTimeout = null;
+
+function initLogoAnimation() {
+  var container = document.querySelector('.logo-typed');
+  var cursor = document.querySelector('.logo-cursor');
+  if (!container) return;
+
+  if (_logoAnimTimeout) {
+    clearTimeout(_logoAnimTimeout);
+    _logoAnimTimeout = null;
+  }
+
+  var text = SITE_CONFIG.name;
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isCompact = window.innerWidth < 480;
+
+  if (reducedMotion || isCompact) {
+    if (isCompact) {
+      container.innerHTML = '';
+      if (cursor) cursor.hidden = true;
+      return;
+    }
+    container.innerHTML = '';
+    for (var i = 0; i < text.length; i++) {
+      var s = document.createElement('span');
+      s.className = 'logo-char logo-char--visible';
+      s.textContent = text.charAt(i) === ' ' ? '\u00A0' : text.charAt(i);
+      container.appendChild(s);
+    }
+    if (cursor) cursor.hidden = true;
+    return;
+  }
+
+  if (cursor) cursor.hidden = false;
+  container.innerHTML = '';
+
+  var index = 0;
+  var isTyping = true;
+  var chars = [];
+
+  function wait(ms) {
+    return new Promise(function (resolve) {
+      _logoAnimTimeout = setTimeout(resolve, ms);
+    });
+  }
+
+  function addChar(c) {
+    var span = document.createElement('span');
+    span.className = 'logo-char';
+    span.textContent = c === ' ' ? '\u00A0' : c;
+    container.appendChild(span);
+    chars.push(span);
+    requestAnimationFrame(function () {
+      span.classList.add('logo-char--visible');
+    });
+  }
+
+  function removeChar() {
+    var span = chars.pop();
+    if (!span) return Promise.resolve();
+    span.classList.remove('logo-char--visible');
+    span.classList.add('logo-char--exit');
+    return wait(260).then(function () {
+      if (span.parentNode) span.parentNode.removeChild(span);
+    });
+  }
+
+  function runCycle() {
+    if (isTyping) {
+      if (index < text.length) {
+        addChar(text.charAt(index));
+        index += 1;
+        var ch = text.charAt(index - 1);
+        var delay = ch === ' ' ? 50 : 62 + Math.floor(Math.random() * 28);
+        return wait(delay).then(runCycle);
+      }
+      return wait(2600).then(function () {
+        isTyping = false;
+        return runCycle();
+      });
+    }
+
+    if (chars.length > 0) {
+      return removeChar().then(function () {
+        return wait(34).then(runCycle);
+      });
+    }
+
+    index = 0;
+    isTyping = true;
+    return wait(480).then(runCycle);
+  }
+
+  runCycle();
 }
 
 function injectStructuredData(type, data) {

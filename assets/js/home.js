@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   initCommonUI('home');
+  initHeroSlider();
 
   var featured = PRODUCTS.filter(function (p) { return p.inStock; }).slice(0, 4);
   var featuredEl = document.getElementById('featured-products');
@@ -28,3 +29,68 @@ document.addEventListener('DOMContentLoaded', function () {
     description: SITE_CONFIG.tagline
   });
 });
+
+var _heroSliderTimer = null;
+
+function initHeroSlider() {
+  var hero = document.getElementById('hero');
+  if (!hero) return;
+
+  var slides = hero.querySelectorAll('.hero__slide');
+  var dots = hero.querySelectorAll('.hero__dot');
+  if (!slides.length) return;
+
+  var current = 0;
+  var interval = 4500;
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function clearTimer() {
+    if (_heroSliderTimer) {
+      clearInterval(_heroSliderTimer);
+      _heroSliderTimer = null;
+    }
+  }
+
+  function goTo(index) {
+    if (index === current || index < 0 || index >= slides.length) return;
+
+    slides[current].classList.remove('is-active');
+    if (dots[current]) {
+      dots[current].classList.remove('is-active');
+      dots[current].setAttribute('aria-selected', 'false');
+    }
+
+    current = index;
+
+    slides[current].classList.add('is-active');
+    if (dots[current]) {
+      dots[current].classList.add('is-active');
+      dots[current].setAttribute('aria-selected', 'true');
+    }
+  }
+
+  function next() {
+    goTo((current + 1) % slides.length);
+  }
+
+  function startAutoplay() {
+    if (reducedMotion || slides.length < 2) return;
+    clearTimer();
+    _heroSliderTimer = setInterval(next, interval);
+  }
+
+  dots.forEach(function (dot) {
+    dot.addEventListener('click', function () {
+      var index = parseInt(dot.dataset.index, 10);
+      goTo(index);
+      startAutoplay();
+    });
+  });
+
+  hero.addEventListener('mouseenter', clearTimer);
+  hero.addEventListener('mouseleave', startAutoplay);
+  hero.addEventListener('focusin', clearTimer);
+  hero.addEventListener('focusout', startAutoplay);
+
+  startAutoplay();
+}
