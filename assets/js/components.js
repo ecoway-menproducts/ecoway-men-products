@@ -6,16 +6,22 @@ function renderHeader(activePage) {
   return (
     '<header class="header">' +
       '<div class="header__announce">' +
-        '<span>🚚 توصيل خلال ' + SITE_CONFIG.deliveryDays + ' — الدفع عند الاستلام (توصيل مجاني للطلبات أكثر من ' + SITE_CONFIG.freeShippingMin.toLocaleString('ar-EG') + ' جنيه)</span>' +
+        '<span class="header__announce-short">🚚 توصيل ' + SITE_CONFIG.deliveryDays + ' — دفع عند الاستلام</span>' +
+        '<span class="header__announce-full">🚚 توصيل خلال ' + SITE_CONFIG.deliveryDays + ' — الدفع عند الاستلام (توصيل مجاني للطلبات أكثر من ' + SITE_CONFIG.freeShippingMin.toLocaleString('ar-EG') + ' جنيه)</span>' +
       '</div>' +
       '<div class="header__main container">' +
-        '<a href="' + pagePath('index.html') + '" class="header__logo" aria-label="' + SITE_CONFIG.name + '">' +
-          '<span class="header__logo-animated" aria-hidden="true">' +
-            '<span class="logo-typed"></span>' +
-            '<span class="logo-cursor"></span>' +
-          '</span>' +
-          '<span class="header__logo-icon" aria-hidden="true"><span class="header__logo-letter">E</span></span>' +
-        '</a>' +
+        '<div class="header__brand">' +
+          '<button class="header__menu-btn" id="menuToggle" aria-label="فتح القائمة" aria-expanded="false" aria-controls="mobileNav">' +
+            '<span></span><span></span><span></span>' +
+          '</button>' +
+          '<a href="' + pagePath('index.html') + '" class="header__logo" aria-label="' + SITE_CONFIG.name + '">' +
+            '<span class="header__logo-animated" aria-hidden="true">' +
+              '<span class="logo-typed"></span>' +
+              '<span class="logo-cursor"></span>' +
+            '</span>' +
+            '<span class="header__logo-icon" aria-hidden="true"><span class="header__logo-letter">E</span></span>' +
+          '</a>' +
+        '</div>' +
         '<nav class="header__nav" aria-label="التنقل الرئيسي">' +
           '<a href="' + pagePath('index.html') + '" class="' + (activePage === 'home' ? 'active' : '') + '">الرئيسية</a>' +
           '<a href="' + pagePath('products.html') + '" class="' + (activePage === 'products' ? 'active' : '') + '">المنتجات</a>' +
@@ -23,23 +29,24 @@ function renderHeader(activePage) {
           '<a href="' + pagePath('contact.html') + '" class="' + (activePage === 'contact' ? 'active' : '') + '">اتصل بنا</a>' +
         '</nav>' +
         '<div class="header__actions">' +
-          '<a href="' + pagePath('cart.html') + '" class="header__cart" aria-label="سلة التسوق">' +
+          '<a href="' + pagePath('cart.html') + '" class="header__cart header__cart--desktop" aria-label="سلة التسوق">' +
             '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>' +
             '<span class="header__cart-badge" data-cart-count style="display:' + (cartCount > 0 ? 'flex' : 'none') + '">' + cartCount + '</span>' +
           '</a>' +
-          '<button class="header__menu-btn" id="menuToggle" aria-label="فتح القائمة" aria-expanded="false">' +
-            '<span></span><span></span><span></span>' +
-          '</button>' +
         '</div>' +
       '</div>' +
-      '<div class="header__mobile-nav" id="mobileNav" hidden>' +
-        '<a href="' + pagePath('index.html') + '">الرئيسية</a>' +
-        '<a href="' + pagePath('products.html') + '">المنتجات</a>' +
-        '<a href="' + pagePath('about.html') + '">من نحن</a>' +
-        '<a href="' + pagePath('contact.html') + '">اتصل بنا</a>' +
-        '<a href="' + pagePath('cart.html') + '">السلة (' + cartCount + ')</a>' +
+    '</header>' +
+    '<div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop" aria-hidden="true"></div>' +
+    '<nav class="mobile-drawer" id="mobileNav" aria-label="قائمة إضافية" aria-hidden="true">' +
+      '<div class="mobile-drawer__header">' +
+        '<span class="mobile-drawer__title">القائمة</span>' +
+        '<button class="mobile-drawer__close" id="menuClose" aria-label="إغلاق القائمة">&times;</button>' +
       '</div>' +
-    '</header>'
+      '<a href="' + pagePath('about.html') + '">من نحن</a>' +
+      '<a href="' + pagePath('contact.html') + '">اتصل بنا</a>' +
+      '<a href="' + pagePath('shipping-policy.html') + '">سياسة الشحن</a>' +
+      '<a href="' + pagePath('return-policy.html') + '">سياسة الاسترجاع</a>' +
+    '</nav>'
   );
 }
 
@@ -145,7 +152,7 @@ function renderStarsStructure(reviews) {
   if (count === 0) {
     return '<div class="stars stars--empty" aria-label="لا توجد تقييمات بعد">' +
       '<span class="stars__icons">☆☆☆☆☆</span>' +
-      '<span class="stars__count">لا توجد تقييمات بعد</span>' +
+      '<span class="stars__count">لا تقييمات</span>' +
     '</div>';
   }
   var avg = reviews.reduce(function (s, r) { return s + r.rating; }, 0) / count;
@@ -172,14 +179,41 @@ function initCommonUI(activePage) {
   if (whatsappEl) whatsappEl.innerHTML = renderWhatsAppButton();
 
   var menuToggle = document.getElementById('menuToggle');
+  var menuClose = document.getElementById('menuClose');
   var mobileNav = document.getElementById('mobileNav');
+  var drawerBackdrop = document.getElementById('mobileDrawerBackdrop');
+
+  function setMobileDrawer(open) {
+    if (!mobileNav || !drawerBackdrop) return;
+    mobileNav.classList.toggle('is-open', open);
+    drawerBackdrop.classList.toggle('is-open', open);
+    mobileNav.setAttribute('aria-hidden', !open);
+    drawerBackdrop.setAttribute('aria-hidden', !open);
+    if (menuToggle) menuToggle.setAttribute('aria-expanded', open);
+    document.body.classList.toggle('drawer-open', open);
+  }
+
   if (menuToggle && mobileNav) {
     menuToggle.addEventListener('click', function () {
-      var isOpen = !mobileNav.hidden;
-      mobileNav.hidden = isOpen;
-      menuToggle.setAttribute('aria-expanded', !isOpen);
+      setMobileDrawer(!mobileNav.classList.contains('is-open'));
     });
   }
+  if (menuClose) {
+    menuClose.addEventListener('click', function () { setMobileDrawer(false); });
+  }
+  if (drawerBackdrop) {
+    drawerBackdrop.addEventListener('click', function () { setMobileDrawer(false); });
+  }
+  if (mobileNav) {
+    mobileNav.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () { setMobileDrawer(false); });
+    });
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && mobileNav && mobileNav.classList.contains('is-open')) {
+      setMobileDrawer(false);
+    }
+  });
 
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('.btn-add-cart');
