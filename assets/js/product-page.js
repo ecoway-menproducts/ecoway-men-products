@@ -50,7 +50,7 @@ function renderProductDetail(productId, container) {
     '</nav>' +
     '<div class="container product-detail">' +
       '<div class="product-detail__gallery">' +
-        '<img src="' + assetPath(product.image) + '" alt="' + product.name + '" width="500" height="500">' +
+        '<img src="' + assetPath(product.image) + '" alt="' + product.name + '" width="500" height="500" onerror="this.onerror=null;this.src=\'' + assetPath('assets/images/placeholder.svg') + '\'">' +
       '</div>' +
       '<div class="product-detail__info">' +
         '<span class="product-detail__category">' + getCategoryName(product.category) + '</span>' +

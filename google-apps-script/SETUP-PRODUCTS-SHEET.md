@@ -21,21 +21,20 @@
 
 **Google Drive** — لأنك تستخدم Google Sheets أصلاً.
 
-1. ارفع صورة المنتج على [Google Drive](https://drive.google.com)
-2. كليك يمين → **مشاركة** → **أي شخص لديه الرابط → عارض**
-3. انسخ الرابط، ثم حوّله للصيغة المباشرة:
+1. ارفع صورة المنتج على [Google Drive](https://drive.google.com) داخل مجلد `products-images`
+2. كليك يمين على **الصورة** → **مشاركة** → **أي شخص لديه الرابط → عارض**
+3. **Copy link** والصق الرابط كما هو في عمود `image`
 
-```
-الرابط الأصلي:
-https://drive.google.com/file/d/FILE_ID/view?usp=sharing
+> الموقع يحوّل رابط Drive تلقائياً إلى صيغة تعمل في الصفحة، فلا داعي لتعديله يدوياً.
+> تُقبل كل هذه الصيغ:
+> - `https://drive.google.com/file/d/FILE_ID/view?usp=sharing`
+> - `https://drive.google.com/uc?export=view&id=FILE_ID`
+> - `https://drive.google.com/open?id=FILE_ID`
 
-ضع FILE_ID هنا:
-https://drive.google.com/uc?export=view&id=FILE_ID
-```
+> **مهم:** لا تعمل صيغة `uc?export=view` مباشرة داخل `<img>` بعد تغييرات Google الأخيرة،
+> لذلك الموقع يحوّلها داخلياً إلى `drive.google.com/thumbnail?id=...&sz=w1000`.
 
-4. الصق الرابط في عمود `image` في الشيت
-
-> **نصيحة:** أنشئ مجلد Drive باسم `Ecoway Product Images` وارفع كل الصور فيه.
+> **نصيحة:** الصورة يجب أن تكون **Anyone with the link → Viewer** وإلا لن تظهر للزوار.
 
 ## تنفيذ الخطوة 1 على Google
 

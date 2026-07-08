@@ -129,7 +129,7 @@ function renderProductCard(product) {
     '<article class="product-card" data-product-id="' + product.id + '">' +
       (discount > 0 ? '<span class="product-card__badge">-' + discount + '%</span>' : '') +
       '<a href="' + pagePath('product.html') + '?id=' + product.id + '" class="product-card__image">' +
-        '<img src="' + assetPath(product.image) + '" alt="' + product.name + '" loading="lazy" width="300" height="300">' +
+        '<img src="' + assetPath(product.image) + '" alt="' + product.name + '" loading="lazy" width="300" height="300" onerror="this.onerror=null;this.src=\'' + assetPath('assets/images/placeholder.svg') + '\'">' +
       '</a>' +
       '<div class="product-card__body">' +
         '<span class="product-card__category">' + getCategoryName(product.category) + '</span>' +

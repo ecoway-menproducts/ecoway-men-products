@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
       return (
         '<div class="cart-item" data-id="' + item.id + '">' +
           '<div class="cart-item__image">' +
-            '<img src="' + assetPath(item.image) + '" alt="' + item.name + '" width="80" height="80">' +
+            '<img src="' + assetPath(item.image) + '" alt="' + item.name + '" width="80" height="80" onerror="this.onerror=null;this.src=\'' + assetPath('assets/images/placeholder.svg') + '\'">' +
           '</div>' +
           '<div class="cart-item__info">' +
             '<h3>' + item.name + '</h3>' +

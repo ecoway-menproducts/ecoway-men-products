@@ -13,6 +13,30 @@ function getProductsApiUrl() {
   return url.split('?')[0] + '?action=products';
 }
 
+var PLACEHOLDER_IMAGE = 'assets/images/placeholder.svg';
+
+/**
+ * يحوّل أي رابط Google Drive إلى صيغة تعمل داخل <img>.
+ * يدعم: /file/d/ID/view — uc?export=view&id=ID — open?id=ID — thumbnail?id=ID
+ * غير روابط Drive تُعاد كما هي.
+ */
+function resolveImageUrl(url) {
+  url = String(url || '').trim();
+  if (!url) return PLACEHOLDER_IMAGE;
+  if (url.indexOf('drive.google.com') === -1 && url.indexOf('lh3.googleusercontent.com') === -1) {
+    return url;
+  }
+
+  var id = '';
+  var m = url.match(/\/file\/d\/([^/]+)/) ||
+    url.match(/[?&]id=([^&]+)/) ||
+    url.match(/lh3\.googleusercontent\.com\/d\/([^=?&/]+)/);
+  if (m) id = m[1];
+
+  if (!id) return url;
+  return 'https://drive.google.com/thumbnail?id=' + id + '&sz=w1000';
+}
+
 function normalizeProduct(raw) {
   var compareAt = raw.compareAt;
   if (compareAt === '' || compareAt == null || isNaN(Number(compareAt))) {
@@ -28,7 +52,7 @@ function normalizeProduct(raw) {
     price: Number(raw.price) || 0,
     compareAt: compareAt,
     description: String(raw.description || '').trim(),
-    image: String(raw.image || '').trim() || 'assets/images/placeholder.svg',
+    image: resolveImageUrl(raw.image),
     inStock: raw.inStock !== false && raw.inStock !== 'FALSE' && raw.inStock !== 'false',
     reviews: Array.isArray(raw.reviews) ? raw.reviews : []
   };
