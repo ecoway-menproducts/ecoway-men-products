@@ -2,11 +2,25 @@ document.addEventListener('DOMContentLoaded', function () {
   initCommonUI('home');
   initHeroSlider();
 
-  var featured = PRODUCTS.filter(function (p) { return p.inStock; }).slice(0, 4);
   var featuredEl = document.getElementById('featured-products');
   if (featuredEl) {
-    featuredEl.innerHTML = featured.map(renderProductCard).join('');
+    featuredEl.innerHTML = '<div class="no-results"><p>جاري تحميل المنتجات...</p></div>';
   }
+
+  loadProducts()
+    .then(function () {
+      var featured = PRODUCTS.filter(function (p) { return p.inStock; }).slice(0, 4);
+      if (featuredEl) {
+        if (featured.length === 0) {
+          featuredEl.innerHTML = '<div class="no-results"><p>لا توجد منتجات متاحة حالياً</p></div>';
+        } else {
+          featuredEl.innerHTML = featured.map(renderProductCard).join('');
+        }
+      }
+    })
+    .catch(function () {
+      renderProductsLoadError(featuredEl);
+    });
 
   var categoriesEl = document.getElementById('categories-grid');
   if (categoriesEl) {

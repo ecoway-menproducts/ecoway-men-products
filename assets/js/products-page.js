@@ -19,6 +19,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  if (productsGrid) {
+    productsGrid.innerHTML = '<div class="no-results"><p>جاري تحميل المنتجات...</p></div>';
+  }
+
   function renderFilters() {
     var tabs = '<button class="filter-tab' + (currentCategory === 'all' ? ' active' : '') + '" data-category="all">الكل</button>';
     tabs += CATEGORIES.map(function (cat) {
@@ -51,8 +55,15 @@ document.addEventListener('DOMContentLoaded', function () {
     productsGrid.innerHTML = items.map(renderProductCard).join('');
   }
 
-  renderFilters();
-  filterProducts();
+  loadProducts()
+    .then(function () {
+      renderFilters();
+      filterProducts();
+    })
+    .catch(function () {
+      renderProductsLoadError(productsGrid);
+      if (resultsCount) resultsCount.textContent = '';
+    });
 
   filterTabs.addEventListener('click', function (e) {
     var tab = e.target.closest('.filter-tab');

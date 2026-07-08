@@ -1,173 +1,84 @@
 /**
- * بيانات المنتجات — أسماء افتراضية (سيتم استبدالها من لوحة التحكم لاحقاً)
+ * المنتجات — تُحمَّل من Google Sheet عبر Apps Script
+ * GET → orderEndpoint?action=products
  */
-const PRODUCTS = [
-  {
-    id: 'perf-silver',
-    name: 'عطر الرجل الفضي',
-    category: 'perfumes',
-    price: 450,
-    compareAt: null,
-    description: 'عطر رجالي فاخر بتركيبة منعشة تجمع بين نفحات الحمضيات والأخشاب. مثالي للاستخدام اليومي والمناسبات الرسمية.',
-    notes: { top: 'برغموت، ليمون', middle: 'لافندر، فلفل', base: 'أرز، خشب الصندل' },
-    inStock: true,
-    image: 'assets/images/placeholder.svg',
-    reviews: []
-  },
-  {
-    id: 'perf-night-king',
-    name: 'عطر نايت كينج',
-    category: 'perfumes',
-    price: 380,
-    compareAt: 450,
-    description: 'عطر ليلي جريء يعكس ثقة الرجل العصري. نفحات دافئة من العنبر والمسك.',
-    notes: { top: 'كارداموم، زعفران', middle: 'ورد، عنبر', base: 'مسك، فانيليا' },
-    inStock: true,
-    image: 'assets/images/placeholder.svg',
-    reviews: []
-  },
-  {
-    id: 'perf-pine',
-    name: 'عطر الصنوبر الكلاسيكي',
-    category: 'perfumes',
-    price: 520,
-    compareAt: null,
-    description: 'رائحة خشبية كلاسيكية مستوحاة من غابات الصنوبر. ثبات عالٍ وفوحان مميز.',
-    notes: { top: 'صنوبر، إكليل الجبل', middle: 'أرز، باتشولي', base: 'جلد، عنبر رمادي' },
-    inStock: true,
-    image: 'assets/images/placeholder.svg',
-    reviews: []
-  },
-  {
-    id: 'perf-body-spray',
-    name: 'بخاخ الجسم الأسود',
-    category: 'perfumes',
-    price: 180,
-    compareAt: null,
-    description: 'بخاخ جسم خفيف للاستخدام اليومي. منعش ومناسب بعد الرياضة أو العمل.',
-    inStock: true,
-    image: 'assets/images/placeholder.svg',
-    reviews: []
-  },
-  {
-    id: 'skin-shave-cream',
-    name: 'كريم الحلاقة المرطب',
-    category: 'skincare',
-    price: 120,
-    compareAt: null,
-    description: 'كريم حلاقة غني بالألوفيرا يهدئ البشرة ويمنع الاحمرار. مناسب لجميع أنواع البشرة.',
-    inStock: true,
-    image: 'assets/images/placeholder.svg',
-    reviews: []
-  },
-  {
-    id: 'skin-face-gel',
-    name: 'جل الوجه اليومي للرجال',
-    category: 'skincare',
-    price: 95,
-    compareAt: 110,
-    description: 'جل ترطيب خفيف سريع الامتصاص. يحمي البشرة من الجفاف طوال اليوم.',
-    inStock: true,
-    image: 'assets/images/placeholder.svg',
-    reviews: []
-  },
-  {
-    id: 'skin-aftershave',
-    name: 'لوشن ما بعد الحلاقة',
-    category: 'skincare',
-    price: 85,
-    compareAt: null,
-    description: 'لوشن مهدئ يغلق المسام ويرطب البشرة بعد الحلاقة. برائحة منعشة خفيفة.',
-    inStock: true,
-    image: 'assets/images/placeholder.svg',
-    reviews: []
-  },
-  {
-    id: 'skin-charcoal-wash',
-    name: 'غسول الفحم المنشط',
-    category: 'skincare',
-    price: 75,
-    compareAt: null,
-    description: 'غسول وجه بالفحم المنشط لتنظيف عميق وإزالة الشوائب والزيوت الزائدة.',
-    inStock: true,
-    image: 'assets/images/placeholder.svg',
-    reviews: []
-  },
-  {
-    id: 'car-shampoo',
-    name: 'شامبو غسيل السيارات',
-    category: 'home',
-    price: 85,
-    compareAt: null,
-    description: 'شامبو مركز لغسيل هيكل السيارة بعمق دون الإضرار بالطلاء. رغوة غنية تزيل الأتربة والدهون بسهولة.',
-    inStock: true,
-    image: 'assets/images/placeholder.svg',
-    reviews: []
-  },
-  {
-    id: 'car-freshener',
-    name: 'معطر سيارة Ecoway',
-    category: 'home',
-    price: 75,
-    compareAt: null,
-    description: 'معطر سيارة برائحة منعشة تدوم طويلاً. مناسب للتعليق أو التثبيت داخل المقصورة.',
-    inStock: true,
-    image: 'assets/images/placeholder.svg',
-    reviews: []
-  },
-  {
-    id: 'car-interior-cleaner',
-    name: 'منظف داخلية السيارة',
-    category: 'home',
-    price: 95,
-    compareAt: 110,
-    description: 'منظف متعدد الاستخدامات للمقاعد والتابلوه والبلاستيك الداخلي. ينظف ويعطر دون ترك بقع.',
-    inStock: true,
-    image: 'assets/images/placeholder.svg',
-    reviews: []
-  },
-  {
-    id: 'pkg-full-care',
-    name: 'باكدج العناية الشاملة',
-    category: 'packages',
-    price: 650,
-    compareAt: 780,
-    description: 'باكدج متكامل يشمل: عطر + جل وجه + لوشن ما بعد الحلاقة + بخاخ جسم. توفير 17%.',
-    inStock: true,
-    image: 'assets/images/placeholder.svg',
-    reviews: []
-  },
-  {
-    id: 'pkg-scent-body',
-    name: 'باكدج العطر والجسم',
-    category: 'packages',
-    price: 480,
-    compareAt: 550,
-    description: 'باكدج يجمع عطر نايت كينج مع بخاخ الجسم الأسود ولوشن ما بعد الحلاقة.',
-    inStock: true,
-    image: 'assets/images/placeholder.svg',
-    reviews: []
-  },
-  {
-    id: 'pkg-starter',
-    name: 'باكدج البداية للرجال',
-    category: 'packages',
-    price: 320,
-    compareAt: null,
-    description: 'باكدج مثالي للتجربة الأولى: غسول فحم + جل وجه + بخاخ جسم بسعر مميز.',
-    inStock: true,
-    image: 'assets/images/placeholder.svg',
-    reviews: []
+var PRODUCTS = [];
+var _productsPromise = null;
+
+function getProductsApiUrl() {
+  if (SITE_CONFIG.productsEndpoint) {
+    return SITE_CONFIG.productsEndpoint;
   }
-];
+  var url = SITE_CONFIG.orderEndpoint || '';
+  return url.split('?')[0] + '?action=products';
+}
+
+function normalizeProduct(raw) {
+  var compareAt = raw.compareAt;
+  if (compareAt === '' || compareAt == null || isNaN(Number(compareAt))) {
+    compareAt = null;
+  } else {
+    compareAt = Number(compareAt);
+  }
+
+  var product = {
+    id: String(raw.id || '').trim(),
+    name: String(raw.name || '').trim(),
+    category: String(raw.category || '').trim(),
+    price: Number(raw.price) || 0,
+    compareAt: compareAt,
+    description: String(raw.description || '').trim(),
+    image: String(raw.image || '').trim() || 'assets/images/placeholder.svg',
+    inStock: raw.inStock !== false && raw.inStock !== 'FALSE' && raw.inStock !== 'false',
+    reviews: Array.isArray(raw.reviews) ? raw.reviews : []
+  };
+
+  if (raw.notes && (raw.notes.top || raw.notes.middle || raw.notes.base)) {
+    product.notes = raw.notes;
+  }
+
+  return product;
+}
+
+function loadProducts(forceReload) {
+  if (!forceReload && _productsPromise) {
+    return _productsPromise;
+  }
+
+  _productsPromise = fetch(getProductsApiUrl())
+    .then(function (res) {
+      if (!res.ok) throw new Error('تعذر الاتصال بمصدر المنتجات');
+      return res.json();
+    })
+    .then(function (data) {
+      if (!data.success || !Array.isArray(data.products)) {
+        throw new Error(data.error || 'استجابة غير صالحة من Google Sheet');
+      }
+      PRODUCTS = data.products.map(normalizeProduct).filter(function (p) {
+        return p.id && p.name;
+      });
+      return PRODUCTS;
+    })
+    .catch(function (err) {
+      console.error('loadProducts:', err);
+      PRODUCTS = [];
+      throw err;
+    });
+
+  return _productsPromise;
+}
 
 function getProductById(id) {
   return PRODUCTS.find(function (p) { return p.id === id; });
 }
 
 function getProductsByCategory(categoryId) {
-  if (!categoryId || categoryId === 'all') return PRODUCTS.filter(function (p) { return p.inStock; });
-  return PRODUCTS.filter(function (p) { return p.category === categoryId && p.inStock; });
+  if (!categoryId || categoryId === 'all') {
+    return PRODUCTS.filter(function (p) { return p.inStock; });
+  }
+  return PRODUCTS.filter(function (p) {
+    return p.category === categoryId && p.inStock;
+  });
 }
 
 function getCategoryName(categoryId) {
@@ -199,4 +110,14 @@ function formatShippingCost(amount) {
 function getDiscountPercent(price, compareAt) {
   if (!compareAt || compareAt <= price) return 0;
   return Math.round(((compareAt - price) / compareAt) * 100);
+}
+
+function renderProductsLoadError(container, message) {
+  if (!container) return;
+  container.innerHTML =
+    '<div class="no-results">' +
+      '<p>' + (message || 'تعذر تحميل المنتجات من Google Sheet') + '</p>' +
+      '<p style="margin-top:8px;font-size:0.9rem;color:var(--color-text-muted)">تأكد من نشر Apps Script (New version) ثم حدّث الصفحة.</p>' +
+      '<button type="button" class="btn btn--outline btn--sm mt-16" onclick="location.reload()">إعادة المحاولة</button>' +
+    '</div>';
 }

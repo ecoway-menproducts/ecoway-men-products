@@ -3,8 +3,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var params = new URLSearchParams(window.location.search);
   var productId = params.get('id');
-  var product = getProductById(productId);
   var container = document.getElementById('product-detail');
+
+  if (container) {
+    container.innerHTML = '<div class="no-results container"><p>جاري تحميل المنتج...</p></div>';
+  }
+
+  loadProducts()
+    .then(function () {
+      renderProductDetail(productId, container);
+    })
+    .catch(function () {
+      renderProductsLoadError(container);
+    });
+});
+
+function renderProductDetail(productId, container) {
+  var product = getProductById(productId);
 
   if (!product) {
     container.innerHTML = '<div class="cart-empty"><h2>المنتج غير موجود</h2><a href="' + pagePath('products.html') + '" class="btn btn--primary mt-16">العودة للمنتجات</a></div>';
@@ -112,4 +127,4 @@ document.addEventListener('DOMContentLoaded', function () {
       availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'
     }
   });
-});
+}

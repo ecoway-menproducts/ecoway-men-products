@@ -14,8 +14,10 @@ const SITE_CONFIG = {
   deliveryDays: '4–7 أيام',
   paymentMethod: 'الدفع عند الاستلام (COD)',
   year: new Date().getFullYear(),
-  // استبدل هذا الرابط برابط Google Apps Script الخاص بك
-  orderEndpoint: 'https://script.google.com/macros/s/AKfycbxCyaysYLZv3II3A6N3p73N-EmS5yKtGOidEKcTnPtsoIe0mtg0jyv8M8v0fS0FUWKPSw/exec',
+  // رابط Google Apps Script — الطلبات (POST) والمنتجات (?action=products)
+  orderEndpoint: 'https://script.google.com/macros/s/AKfycbzpz_o0cZ4s_zFLvNeMku9lQmlOzZIb9hWS42kD67hTgeRMY7AH_htxsZH0gjeNWCDqsg/exec',
+  // اختياري — يُشتق تلقائياً من orderEndpoint إن تُرك فارغاً
+  productsEndpoint: '',
   basePath: (function () {
     const path = window.location.pathname;
     if (path.includes('/ecoway-men-products')) {
