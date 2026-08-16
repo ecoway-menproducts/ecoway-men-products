@@ -3,12 +3,13 @@
  * =========================================
  * الطلبات: POST → شيت Orders
  * المنتجات: GET ?action=products → شيت products
+ * الإدارة: GET ?action=adminAuth|adminProducts + POST adminAction
  *
  * خطوات النشر:
  * 1. افتح Google Sheet (Ecoway Orders) أو أنشئ جدولاً جديداً
  * 2. Extensions → Apps Script → الصق هذا الملف
- * 3. شغّل مرة واحدة: seedProductsSheet (من القائمة المنسدلة ثم Run)
- * 4. Deploy → New deployment → Web app
+ * 3. شغّل مرة واحدة: seedProductsSheet ثم authorizeAdminDrive
+ * 4. Deploy → New deployment → Web app (أو New version)
  *    - Execute as: Me
  *    - Who has access: Anyone
  * 5. انسخ رابط /exec إلى assets/js/config.js
@@ -16,7 +17,10 @@
 
 var ORDERS_SHEET_NAME = 'Orders';
 var PRODUCTS_SHEET_NAME = 'products';
+var PRODUCTS_IMAGES_FOLDER = 'ecoway-products-images';
 var NOTIFY_EMAIL = 'ecowaymenproducts@gmail.com';
+var ADMIN_TOKEN = '9607330';
+var MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
 var ORDERS_SHEET_HEADERS = [
   'التاريخ',
@@ -48,12 +52,18 @@ var PRODUCTS_SHEET_HEADERS = [
 ];
 
 /**
- * POST — استقبال طلب جديد من checkout.html
+ * POST — طلبات المتجر أو إجراءات لوحة الإدارة (adminAction)
  */
 function doPost(e) {
   try {
+    var raw = (e && e.postData && e.postData.contents) ? e.postData.contents : '';
+    var data = JSON.parse(raw);
+
+    if (data.adminAction) {
+      return handleAdminAction_(data);
+    }
+
     var sheet = getOrdersSheet();
-    var data = JSON.parse(e.postData.contents);
 
     var productsText = '';
     if (data.products && data.products.length) {
@@ -107,11 +117,34 @@ function doGet(e) {
     }
   }
 
+  if (action === 'adminAuth' || action === 'adminProducts') {
+    if (!isValidAdminToken_(e.parameter.token)) {
+      return jsonResponse({ success: false, error: 'غير مصرح' });
+    }
+    if (action === 'adminAuth') {
+      return jsonResponse({ success: true });
+    }
+    try {
+      return jsonResponse({
+        success: true,
+        products: getAllProductsFromSheet_()
+      });
+    } catch (err) {
+      return jsonResponse({
+        success: false,
+        error: err.message,
+        products: []
+      });
+    }
+  }
+
   return jsonResponse({
     status: 'ok',
     service: 'Ecoway Men Products API',
     endpoints: {
       products: '?action=products',
+      adminAuth: '?action=adminAuth&token=',
+      adminProducts: '?action=adminProducts&token=',
       orders: 'POST JSON to this URL'
     }
   });
@@ -202,6 +235,9 @@ function rowToProduct_(headers, row) {
     image: image,
     inStock: inStock,
     active: active,
+    notes_top: notesTop,
+    notes_middle: notesMiddle,
+    notes_base: notesBase,
     reviews: []
   };
 
@@ -250,6 +286,200 @@ function jsonResponse(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function isValidAdminToken_(token) {
+  return String(token || '').trim() === ADMIN_TOKEN;
+}
+
+function requireAdmin_(data) {
+  if (!isValidAdminToken_(data && data.token)) {
+    throw new Error('غير مصرح');
+  }
+}
+
+/**
+ * شغّل مرة واحدة من Apps Script للموافقة على صلاحية Drive
+ */
+function authorizeAdminDrive() {
+  getProductsImagesFolder_();
+}
+
+function handleAdminAction_(data) {
+  requireAdmin_(data);
+
+  if (data.adminAction === 'login') {
+    return jsonResponse({ success: true });
+  }
+
+  if (data.adminAction === 'list') {
+    return jsonResponse({ success: true, products: getAllProductsFromSheet_() });
+  }
+
+  if (data.adminAction === 'saveProduct') {
+    var saved = saveProduct_(data);
+    return jsonResponse({ success: true, product: saved });
+  }
+
+  if (data.adminAction === 'deleteProduct') {
+    deleteProduct_(data.id);
+    return jsonResponse({ success: true });
+  }
+
+  throw new Error('إجراء غير معروف');
+}
+
+function getAllProductsFromSheet_() {
+  var sheet = getProductsSheet();
+  var values = sheet.getDataRange().getValues();
+  if (values.length <= 1) return [];
+
+  var headers = values[0].map(normalizeHeader_);
+  var products = [];
+
+  for (var i = 1; i < values.length; i++) {
+    var row = values[i];
+    if (isRowEmpty_(row)) continue;
+    var item = rowToProduct_(headers, row);
+    if (!item || !item.id) continue;
+    products.push(item);
+  }
+
+  return products;
+}
+
+function saveProduct_(data) {
+  var incoming = data.product || {};
+  var id = String(incoming.id || '').trim();
+  var name = String(incoming.name || '').trim();
+  var originalId = String(data.originalId || id).trim();
+
+  if (!/^[a-zA-Z0-9_-]+$/.test(id)) {
+    throw new Error('معرف المنتج يجب أن يحتوي حروف إنجليزية وأرقام و - أو _ فقط');
+  }
+  if (!name) {
+    throw new Error('اسم المنتج مطلوب');
+  }
+
+  var sheet = getProductsSheet();
+  var values = sheet.getDataRange().getValues();
+  var headers = values[0].map(normalizeHeader_);
+  var rowIndex = findProductRowIndex_(values, headers, originalId);
+
+  if (rowIndex === -1) {
+    if (findProductRowIndex_(values, headers, id) !== -1) {
+      throw new Error('يوجد منتج بنفس المعرف');
+    }
+  } else if (id !== originalId && findProductRowIndex_(values, headers, id) !== -1) {
+    throw new Error('يوجد منتج بنفس المعرف');
+  }
+
+  var existingImage = '';
+  if (rowIndex !== -1) {
+    var existing = rowToProduct_(headers, values[rowIndex]);
+    existingImage = existing && existing.image ? existing.image : '';
+  }
+
+  var imageUrl = existingImage;
+  if (data.imageBase64) {
+    imageUrl = uploadProductImage_(id, data.imageBase64, data.imageMimeType, data.imageFileName);
+  } else if (incoming.image) {
+    imageUrl = String(incoming.image).trim();
+  }
+
+  var rowValues = productToRow_(incoming, id, name, imageUrl);
+
+  if (rowIndex === -1) {
+    sheet.appendRow(rowValues);
+  } else {
+    sheet.getRange(rowIndex + 1, 1, 1, PRODUCTS_SHEET_HEADERS.length).setValues([rowValues]);
+  }
+
+  return rowToProduct_(PRODUCTS_SHEET_HEADERS.map(normalizeHeader_), rowValues);
+}
+
+function deleteProduct_(id) {
+  id = String(id || '').trim();
+  if (!id) throw new Error('معرف المنتج مطلوب');
+
+  var sheet = getProductsSheet();
+  var values = sheet.getDataRange().getValues();
+  var headers = values[0].map(normalizeHeader_);
+  var rowIndex = findProductRowIndex_(values, headers, id);
+  if (rowIndex === -1) {
+    throw new Error('المنتج غير موجود');
+  }
+  sheet.deleteRow(rowIndex + 1);
+}
+
+function findProductRowIndex_(values, headers, id) {
+  var col = headers.indexOf('id');
+  if (col === -1 || !id) return -1;
+  for (var i = 1; i < values.length; i++) {
+    if (String(values[i][col] || '').trim() === id) return i;
+  }
+  return -1;
+}
+
+function productToRow_(p, id, name, imageUrl) {
+  var notesTop = p.notes_top || (p.notes && p.notes.top) || '';
+  var notesMiddle = p.notes_middle || (p.notes && p.notes.middle) || '';
+  var notesBase = p.notes_base || (p.notes && p.notes.base) || '';
+
+  return [
+    id,
+    name,
+    String(p.category || '').trim(),
+    parseNumber_(p.price),
+    p.compareAt === '' || p.compareAt == null ? '' : parseOptionalNumber_(p.compareAt),
+    String(p.description || '').trim(),
+    imageUrl || '',
+    p.inStock !== false && p.inStock !== 'FALSE' && p.inStock !== 'false',
+    p.active !== false && p.active !== 'FALSE' && p.active !== 'false',
+    String(notesTop).trim(),
+    String(notesMiddle).trim(),
+    String(notesBase).trim()
+  ];
+}
+
+function getProductsImagesFolder_() {
+  var it = DriveApp.getFoldersByName(PRODUCTS_IMAGES_FOLDER);
+  if (it.hasNext()) return it.next();
+  var folder = DriveApp.createFolder(PRODUCTS_IMAGES_FOLDER);
+  folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  return folder;
+}
+
+function uploadProductImage_(productId, base64Data, mimeType, fileName) {
+  var raw = String(base64Data || '').replace(/^data:[^;]+;base64,/, '');
+  if (!raw) throw new Error('الصورة فارغة');
+
+  mimeType = String(mimeType || 'image/jpeg').split(';')[0].trim().toLowerCase();
+  var allowed = {
+    'image/jpeg': '.jpg',
+    'image/jpg': '.jpg',
+    'image/png': '.png',
+    'image/webp': '.webp',
+    'image/gif': '.gif'
+  };
+  if (!allowed[mimeType]) {
+    throw new Error('نوع الصورة غير مدعوم');
+  }
+
+  var decoded = Utilities.base64Decode(raw);
+  if (decoded.length > MAX_IMAGE_BYTES) {
+    throw new Error('حجم الصورة أكبر من 8 ميجا');
+  }
+
+  var safeName = String(fileName || productId + allowed[mimeType]).replace(/[^\w.\-ء-ي]+/g, '_');
+  if (safeName.indexOf('.') === -1) safeName += allowed[mimeType];
+
+  var blob = Utilities.newBlob(decoded, mimeType, safeName);
+  var file = getProductsImagesFolder_().createFile(blob);
+  file.setName(productId + '-' + file.getId().slice(-6) + allowed[mimeType]);
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+
+  return 'https://drive.google.com/file/d/' + file.getId() + '/view';
 }
 
 function sendOrderEmail(data, productsText) {

@@ -10,6 +10,10 @@
 - `cart.html` — سلة التسوق (localStorage)
 - `checkout.html` — إتمام الطلب (POST → Google Apps Script)
 
+## لوحة الإدارة
+
+الصفحة `admin.html` غير ظاهرة في قائمة الموقع. افتحها بالرابط المباشر بعد نشر نسخة جديدة من Apps Script (ملف `google-apps-script/Code.gs`).
+
 ## الإعداد
 
 ### 1. Google Apps Script

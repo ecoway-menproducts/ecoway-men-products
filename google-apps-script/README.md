@@ -20,6 +20,17 @@ orderEndpoint: 'https://script.google.com/macros/s/XXXX/exec',
 
 8. ارفع التعديل على GitHub
 
+## لوحة الإدارة (`admin.html`)
+
+بعد لصق `Code.gs` المحدّث:
+
+1. من Apps Script شغّل الدالة `authorizeAdminDrive` مرة واحدة ووافق على صلاحية Drive
+2. **Deploy → Manage deployments → ✏️ → New version → Deploy**
+3. افتح: `https://ecoway-menproducts.github.io/ecoway-men-products/admin.html`
+4. أدخل كلمة مرور الإدارة المعرّفة في `ADMIN_TOKEN` داخل `Code.gs`
+
+الصور تُرفع إلى مجلد Drive باسم `ecoway-products-images`، والمنتجات تُكتب في تبويب `products`.
+
 ## التحقق
 
 - افتح رابط `/exec` في المتصفح — يجب أن ترى `status: ok`
