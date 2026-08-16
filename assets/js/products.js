@@ -136,6 +136,45 @@ function getDiscountPercent(price, compareAt) {
   return Math.round(((compareAt - price) / compareAt) * 100);
 }
 
+function renderProductCardSkeleton() {
+  return (
+    '<article class="product-card product-card--skeleton" aria-hidden="true">' +
+      '<div class="product-card__image"><span class="skeleton-bone"></span></div>' +
+      '<div class="product-card__body">' +
+        '<span class="skeleton-bone skeleton-bone--xs"></span>' +
+        '<span class="skeleton-bone skeleton-bone--title"></span>' +
+        '<span class="skeleton-bone skeleton-bone--price"></span>' +
+        '<span class="skeleton-bone skeleton-bone--btn"></span>' +
+      '</div>' +
+    '</article>'
+  );
+}
+
+function renderProductSkeletons(count) {
+  var html = '';
+  var n = count || 8;
+  for (var i = 0; i < n; i++) html += renderProductCardSkeleton();
+  return html;
+}
+
+function renderProductDetailSkeleton() {
+  return (
+    '<div class="container product-detail product-detail--skeleton" aria-busy="true" aria-live="polite">' +
+      '<div class="product-detail__gallery"><span class="skeleton-bone skeleton-bone--gallery"></span></div>' +
+      '<div class="product-detail__info">' +
+        '<span class="skeleton-bone skeleton-bone--xs"></span>' +
+        '<span class="skeleton-bone skeleton-bone--h1"></span>' +
+        '<span class="skeleton-bone skeleton-bone--stars"></span>' +
+        '<span class="skeleton-bone skeleton-bone--price-lg"></span>' +
+        '<span class="skeleton-bone skeleton-bone--line"></span>' +
+        '<span class="skeleton-bone skeleton-bone--line"></span>' +
+        '<span class="skeleton-bone skeleton-bone--line skeleton-bone--short"></span>' +
+        '<span class="skeleton-bone skeleton-bone--btn-lg"></span>' +
+      '</div>' +
+    '</div>'
+  );
+}
+
 function renderProductsLoadError(container, message) {
   if (!container) return;
   container.innerHTML =

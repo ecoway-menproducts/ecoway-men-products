@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var container = document.getElementById('product-detail');
 
   if (container) {
-    container.innerHTML = '<div class="no-results container"><p>جاري تحميل المنتج...</p></div>';
+    container.innerHTML = renderProductDetailSkeleton();
   }
 
   loadProducts()

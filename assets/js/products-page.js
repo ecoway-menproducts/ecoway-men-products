@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   if (productsGrid) {
-    productsGrid.innerHTML = '<div class="no-results"><p>جاري تحميل المنتجات...</p></div>';
+    productsGrid.innerHTML = renderProductSkeletons(8);
   }
 
   function renderFilters() {

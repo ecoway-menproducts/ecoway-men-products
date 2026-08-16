@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var featuredEl = document.getElementById('featured-products');
   if (featuredEl) {
-    featuredEl.innerHTML = '<div class="no-results"><p>جاري تحميل المنتجات...</p></div>';
+    featuredEl.innerHTML = renderProductSkeletons(4);
   }
 
   loadProducts()
