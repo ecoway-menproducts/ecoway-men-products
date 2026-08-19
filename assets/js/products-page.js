@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   if (productsGrid) {
-    productsGrid.innerHTML = renderProductSkeletons(8);
+    productsGrid.innerHTML = renderProductSkeletons(4);
   }
 
   function renderFilters() {

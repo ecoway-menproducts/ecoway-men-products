@@ -1096,32 +1096,25 @@ body.drawer-open { overflow: hidden; }
 /* ─── Skeleton loading ─── */
 .skeleton-bone {
   display: block;
-  background: linear-gradient(90deg, #ece8e1 25%, #f7f4ef 50%, #ece8e1 75%);
-  background-size: 200% 100%;
-  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+  background: #ece8e1;
   border-radius: var(--radius-sm);
+  position: relative;
+  overflow: hidden;
 }
 
-.product-card--skeleton {
-  pointer-events: none;
-  box-shadow: var(--shadow);
+.skeleton-bone::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%);
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  will-change: transform;
 }
 
-.product-card--skeleton:hover {
-  transform: none;
-  box-shadow: var(--shadow);
-  border-color: var(--color-border);
-}
-
-.product-card--skeleton .product-card__image {
-  padding: 0;
-}
-
-.product-card--skeleton .product-card__image .skeleton-bone {
-  width: 100%;
-  height: 100%;
-  border-radius: 0;
-}
+.product-card--skeleton { pointer-events: none; }
+.product-card--skeleton:hover { transform: none; box-shadow: var(--shadow); border-color: var(--color-border); }
+.product-card--skeleton .product-card__image { padding: 0; }
+.product-card--skeleton .product-card__image .skeleton-bone { width: 100%; height: 100%; border-radius: 0; }
 
 .skeleton-bone--xs { width: 42%; height: 10px; }
 .skeleton-bone--title { width: 88%; height: 14px; margin-top: 4px; }
@@ -1135,18 +1128,15 @@ body.drawer-open { overflow: hidden; }
 .skeleton-bone--short { width: 62%; }
 .skeleton-bone--btn-lg { width: 100%; height: 48px; margin-top: 16px; }
 
-.product-detail--skeleton .product-detail__info {
-  display: flex;
-  flex-direction: column;
-}
+.product-detail--skeleton .product-detail__info { display: flex; flex-direction: column; }
 
 @keyframes skeleton-shimmer {
-  0% { background-position: 100% 0; }
-  100% { background-position: -100% 0; }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .skeleton-bone { animation: none; background: #ece8e1; }
+  .skeleton-bone::after { animation: none; display: none; }
 }
 
 /* ─── Stars ─── */
