@@ -40,6 +40,7 @@ const Cart = {
     }
 
     this.save(items);
+    bounceCartBadges();
     return true;
   },
 
@@ -105,6 +106,14 @@ function pagePath(filename) {
   var base = SITE_CONFIG.basePath;
   if (base === './') return filename;
   return base + filename;
+}
+
+function bounceCartBadges() {
+  document.querySelectorAll('[data-cart-count]').forEach(function (el) {
+    el.classList.remove('is-bounce');
+    void el.offsetWidth;
+    el.classList.add('is-bounce');
+  });
 }
 
 function showToast(message, type) {

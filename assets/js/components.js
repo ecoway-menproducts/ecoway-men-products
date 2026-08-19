@@ -126,7 +126,7 @@ function renderProductCard(product) {
   var starsHtml = renderStarsStructure(product.reviews);
 
   return (
-    '<article class="product-card" data-product-id="' + product.id + '">' +
+    '<article class="product-card product-card--enter" data-product-id="' + product.id + '">' +
       (discount > 0 ? '<span class="product-card__badge">-' + discount + '%</span>' : '') +
       '<a href="' + pagePath('product.html') + '?id=' + product.id + '" class="product-card__image">' +
         '<img src="' + assetPath(product.image) + '" alt="' + product.name + '" loading="lazy" width="300" height="300" onerror="this.onerror=null;this.src=\'' + assetPath('assets/images/placeholder.svg') + '\'">' +
@@ -234,6 +234,76 @@ function initCommonUI(activePage) {
 
   Cart.updateBadge();
   initLogoAnimation();
+  markPageReady();
+  initBackToTop();
+  initScrollReveal();
+  initDynamicHeader();
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function markPageReady() {
+  document.body.classList.add('is-ready');
+}
+
+function initScrollReveal(root) {
+  var scope = root || document;
+  var auto = scope.querySelectorAll('.section__header, .trust-badge, .category-card, .page-title, .content-page > h1');
+  auto.forEach(function (el) {
+    if (!el.classList.contains('reveal')) el.classList.add('reveal');
+  });
+
+  var els = scope.querySelectorAll('.reveal:not(.is-visible)');
+  if (!els.length) return;
+
+  if (prefersReducedMotion() || !('IntersectionObserver' in window)) {
+    els.forEach(function (el) { el.classList.add('is-visible'); });
+    return;
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -32px 0px' });
+
+  els.forEach(function (el) { io.observe(el); });
+}
+
+function initBackToTop() {
+  if (document.getElementById('backToTop')) return;
+
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'back-to-top';
+  btn.id = 'backToTop';
+  btn.setAttribute('aria-label', 'العودة للأعلى');
+  btn.textContent = '↑';
+  document.body.appendChild(btn);
+
+  window.addEventListener('scroll', function () {
+    btn.classList.toggle('is-visible', window.scrollY > 400);
+  }, { passive: true });
+
+  btn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  });
+}
+
+function initDynamicHeader() {
+  var header = document.querySelector('.header');
+  if (!header) return;
+
+  function onScroll() {
+    header.classList.toggle('is-scrolled', window.scrollY > 16);
+  }
+
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
 }
 
 var _logoAnimTimeout = null;

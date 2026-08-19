@@ -81,6 +81,13 @@ function renderProductDetail(productId, container) {
         '</div>' +
       '</div>' +
     '</div>' +
+    '<div class="sticky-cart-bar" id="stickyCartBar" hidden>' +
+      '<div class="sticky-cart-bar__info">' +
+        '<strong>' + product.name + '</strong>' +
+        '<span>' + formatPrice(product.price) + '</span>' +
+      '</div>' +
+      '<button type="button" class="btn btn--primary btn--sm" id="stickyAddBtn">أضف إلى السلة</button>' +
+    '</div>' +
     '<div class="container">' +
       '<div class="reviews-section">' +
         '<h3>تقييمات العملاء</h3>' +
@@ -114,6 +121,15 @@ function renderProductDetail(productId, container) {
     }
   });
 
+  var stickyAddBtn = document.getElementById('stickyAddBtn');
+  if (stickyAddBtn) {
+    stickyAddBtn.addEventListener('click', function () {
+      document.getElementById('addToCartBtn').click();
+    });
+  }
+  initStickyCartBar();
+  initScrollReveal();
+
   injectStructuredData('Product', {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -127,4 +143,18 @@ function renderProductDetail(productId, container) {
       availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'
     }
   });
+}
+
+function initStickyCartBar() {
+  var bar = document.getElementById('stickyCartBar');
+  var trigger = document.getElementById('addToCartBtn');
+  if (!bar || !trigger || !('IntersectionObserver' in window)) return;
+
+  var io = new IntersectionObserver(function (entries) {
+    var visible = entries[0] && entries[0].isIntersecting;
+    bar.hidden = !!visible;
+    document.body.classList.toggle('has-sticky-cart', !visible);
+  }, { threshold: 0.15 });
+
+  io.observe(trigger);
 }

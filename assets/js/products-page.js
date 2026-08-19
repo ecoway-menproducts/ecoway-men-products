@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(function () {
       renderFilters();
       filterProducts();
+      initScrollReveal();
     })
     .catch(function () {
       renderProductsLoadError(productsGrid);
