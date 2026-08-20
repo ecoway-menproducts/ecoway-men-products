@@ -27,6 +27,7 @@ function renderHeader(activePage) {
           '<a href="' + pagePath('products.html') + '" class="' + (activePage === 'products' ? 'active' : '') + '">المنتجات</a>' +
           '<a href="' + pagePath('about.html') + '" class="' + (activePage === 'about' ? 'active' : '') + '">من نحن</a>' +
           '<a href="' + pagePath('contact.html') + '" class="' + (activePage === 'contact' ? 'active' : '') + '">اتصل بنا</a>' +
+          '<a href="' + pagePath('join.html') + '" class="nav-join' + (activePage === 'join' ? ' active' : '') + '">ابدأ مع Ecoway</a>' +
         '</nav>' +
         '<div class="header__actions">' +
           '<a href="' + pagePath('cart.html') + '" class="header__cart header__cart--desktop" aria-label="سلة التسوق">' +
@@ -44,6 +45,7 @@ function renderHeader(activePage) {
       '</div>' +
       '<a href="' + pagePath('about.html') + '">من نحن</a>' +
       '<a href="' + pagePath('contact.html') + '">اتصل بنا</a>' +
+      '<a href="' + pagePath('join.html') + '">ابدأ مع Ecoway</a>' +
       '<a href="' + pagePath('shipping-policy.html') + '">سياسة الشحن</a>' +
       '<a href="' + pagePath('return-policy.html') + '">سياسة الاسترجاع</a>' +
     '</nav>'
@@ -68,6 +70,7 @@ function renderFooter() {
           '<a href="' + pagePath('products.html') + '">جميع المنتجات</a>' +
           '<a href="' + pagePath('about.html') + '">من نحن</a>' +
           '<a href="' + pagePath('contact.html') + '">اتصل بنا</a>' +
+          '<a href="' + pagePath('join.html') + '">ابدأ مع Ecoway</a>' +
           '<a href="' + pagePath('cart.html') + '">سلة التسوق</a>' +
         '</div>' +
         '<div class="footer__links">' +
@@ -99,9 +102,9 @@ function renderMobileBottomNav(activePage) {
         '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>' +
         '<span>المنتجات</span>' +
       '</a>' +
-      '<a href="' + pagePath('products.html') + '?search=1" class="' + (activePage === 'search' ? 'active' : '') + '">' +
-        '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>' +
-        '<span>بحث</span>' +
+      '<a href="' + pagePath('join.html') + '" class="mobile-nav__join' + (activePage === 'join' ? ' active' : '') + '">' +
+        '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' +
+        '<span>ابدأ مع Ecoway</span>' +
       '</a>' +
       '<a href="' + pagePath('cart.html') + '" class="' + (activePage === 'cart' ? 'active' : '') + '">' +
         '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>' +

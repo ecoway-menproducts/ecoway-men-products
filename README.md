@@ -9,6 +9,7 @@
 - `product.html` — تفاصيل المنتج
 - `cart.html` — سلة التسوق (localStorage)
 - `checkout.html` — إتمام الطلب (POST → Google Apps Script)
+- `join.html` — ابدأ مع Ecoway (طلبات الانضمام → شيت `join`)
 
 ## لوحة الإدارة
 

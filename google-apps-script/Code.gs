@@ -17,6 +17,7 @@
 
 var ORDERS_SHEET_NAME = 'Orders';
 var PRODUCTS_SHEET_NAME = 'products';
+var JOIN_SHEET_NAME = 'join';
 var PRODUCTS_IMAGES_FOLDER = 'ecoway-products-images';
 var NOTIFY_EMAIL = 'ecowaymenproducts@gmail.com';
 var ADMIN_TOKEN = '9607330';
@@ -51,8 +52,21 @@ var PRODUCTS_SHEET_HEADERS = [
   'notes_base'
 ];
 
+var JOIN_SHEET_HEADERS = [
+  'التاريخ',
+  'الاسم',
+  'الهاتف',
+  'سنة الميلاد',
+  'السن',
+  'المحافظة',
+  'خبرة التسويق',
+  'نبذة الخبرة',
+  'أفضل وقت للتواصل',
+  'ملاحظات'
+];
+
 /**
- * POST — طلبات المتجر أو إجراءات لوحة الإدارة (adminAction)
+ * POST — طلبات المتجر أو طلبات الانضمام أو إجراءات لوحة الإدارة (adminAction)
  */
 function doPost(e) {
   try {
@@ -61,6 +75,10 @@ function doPost(e) {
 
     if (data.adminAction) {
       return handleAdminAction_(data);
+    }
+
+    if (data.formType === 'join') {
+      return handleJoinSubmission_(data);
     }
 
     var sheet = getOrdersSheet();
@@ -92,6 +110,47 @@ function doPost(e) {
   } catch (err) {
     return jsonResponse({ success: false, error: err.message });
   }
+}
+
+function handleJoinSubmission_(data) {
+  var sheet = getJoinSheet();
+  sheet.appendRow([
+    data.date || new Date().toISOString(),
+    data.fullName || '',
+    data.phone || '',
+    data.birthYear || '',
+    data.age || '',
+    data.governorate || '',
+    data.hasMarketingExp || '',
+    data.experienceBio || '',
+    data.preferredTimes || '',
+    data.notes || ''
+  ]);
+
+  sendJoinEmail_(data);
+  return jsonResponse({ success: true, message: 'تم تسجيل بيانات الانضمام' });
+}
+
+function getJoinSheet() {
+  return getOrCreateSheet_(JOIN_SHEET_NAME, JOIN_SHEET_HEADERS);
+}
+
+function sendJoinEmail_(data) {
+  var subject = 'طلب انضمام جديد — ابدأ مع Ecoway';
+  var body =
+    'طلب انضمام جديد من الموقع\n\n' +
+    'الاسم: ' + (data.fullName || '') + '\n' +
+    'الهاتف: ' + (data.phone || '') + '\n' +
+    'سنة الميلاد: ' + (data.birthYear || '') + '\n' +
+    'السن: ' + (data.age || '') + '\n' +
+    'المحافظة: ' + (data.governorate || '') + '\n' +
+    'خبرة التسويق: ' + (data.hasMarketingExp || '') + '\n' +
+    'نبذة الخبرة: ' + (data.experienceBio || '—') + '\n' +
+    'أفضل وقت للتواصل: ' + (data.preferredTimes || '') + '\n' +
+    'ملاحظات: ' + (data.notes || '—') + '\n' +
+    'التاريخ: ' + (data.date || new Date().toISOString());
+
+  MailApp.sendEmail(NOTIFY_EMAIL, subject, body);
 }
 
 /**
@@ -145,7 +204,8 @@ function doGet(e) {
       products: '?action=products',
       adminAuth: '?action=adminAuth&token=',
       adminProducts: '?action=adminProducts&token=',
-      orders: 'POST JSON to this URL'
+      orders: 'POST JSON to this URL',
+      join: 'POST JSON with formType=join'
     }
   });
 }

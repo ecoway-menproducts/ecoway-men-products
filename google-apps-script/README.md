@@ -31,6 +31,10 @@ orderEndpoint: 'https://script.google.com/macros/s/XXXX/exec',
 
 الصور تُرفع إلى مجلد Drive باسم `ecoway-products-images`، والمنتجات تُكتب في تبويب `products`.
 
+## طلبات الانضمام (`join.html`)
+
+بعد لصق `Code.gs` المحدّث انشر **New version**. الطلبات تُحفظ في تبويب `join` تلقائياً عند أول إرسال.
+
 ## التحقق
 
 - افتح رابط `/exec` في المتصفح — يجب أن ترى `status: ok`
