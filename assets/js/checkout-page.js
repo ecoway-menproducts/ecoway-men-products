@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var total = Cart.getTotal(shipping);
 
     var itemsHtml = items.map(function (item) {
-      return '<div class="summary-row"><span>' + item.name + ' × ' + item.quantity + '</span><span>' + formatPrice(item.price * item.quantity) + '</span></div>';
+      return '<div class="summary-row"><span>' + item.name + (item.detail ? ' (' + item.detail + ')' : '') + ' × ' + item.quantity + '</span><span>' + formatPrice(item.price * item.quantity) + '</span></div>';
     }).join('');
 
     summaryEl.innerHTML =
@@ -99,7 +99,13 @@ document.addEventListener('DOMContentLoaded', function () {
       governorate: form.governorate.value,
       notes: form.notes.value.trim(),
       products: items.map(function (i) {
-        return { name: i.name, quantity: i.quantity, price: i.price, total: i.price * i.quantity };
+        return {
+          name: i.name,
+          detail: i.detail || '',
+          quantity: i.quantity,
+          price: i.price,
+          total: i.price * i.quantity
+        };
       }),
       subtotal: Cart.getSubtotal(),
       shipping: shipping,

@@ -54,14 +54,48 @@ function normalizeProduct(raw) {
     description: String(raw.description || '').trim(),
     image: resolveImageUrl(raw.image),
     inStock: raw.inStock !== false && raw.inStock !== 'FALSE' && raw.inStock !== 'false',
+    detailType: normalizeDetailType(raw.detailType),
+    detailOptions: String(raw.detailOptions || '').trim(),
     reviews: Array.isArray(raw.reviews) ? raw.reviews : []
   };
+
+  if (product.detailType === 'none') product.detailOptions = '';
 
   if (raw.notes && (raw.notes.top || raw.notes.middle || raw.notes.base)) {
     product.notes = raw.notes;
   }
 
   return product;
+}
+
+function normalizeDetailType(type) {
+  var text = String(type || '').trim().toLowerCase();
+  if (text === 'volume' || text === 'size') return text;
+  return 'none';
+}
+
+function getDetailTypeLabel(type) {
+  type = normalizeDetailType(type);
+  if (type === 'volume') return 'الحجم';
+  if (type === 'size') return 'المقاس';
+  return '';
+}
+
+function getDetailOptions(product) {
+  if (!product || normalizeDetailType(product.detailType) === 'none') return [];
+  return String(product.detailOptions || '')
+    .split('|')
+    .map(function (part) { return part.trim(); })
+    .filter(Boolean);
+}
+
+function formatDetailDisplay(product, selected) {
+  var options = getDetailOptions(product);
+  var value = String(selected || '').trim();
+  if (!value && options.length === 1) value = options[0];
+  if (!value) return '';
+  var label = getDetailTypeLabel(product && product.detailType);
+  return label ? (label + ': ' + value) : value;
 }
 
 function loadProducts(forceReload) {

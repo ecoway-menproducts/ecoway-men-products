@@ -33,6 +33,24 @@ function renderProductDetail(productId, container) {
 
   var discount = getDiscountPercent(product.price, product.compareAt);
   var notesHtml = '';
+  var detailOptions = getDetailOptions(product);
+  var detailLabel = getDetailTypeLabel(product.detailType);
+  var detailHtml = '';
+
+  if (detailOptions.length === 1) {
+    detailHtml =
+      '<p class="product-detail__detail"><strong>' + detailLabel + ':</strong> ' + detailOptions[0] + '</p>';
+  } else if (detailOptions.length > 1) {
+    detailHtml =
+      '<div class="product-detail__options">' +
+        '<label for="detailOption">' + detailLabel + ':</label>' +
+        '<select id="detailOption" aria-label="' + detailLabel + '">' +
+          detailOptions.map(function (opt, i) {
+            return '<option value="' + opt.replace(/"/g, '&quot;') + '"' + (i === 0 ? ' selected' : '') + '>' + opt + '</option>';
+          }).join('') +
+        '</select>' +
+      '</div>';
+  }
 
   if (product.notes) {
     notesHtml = '<div class="notes-table"><h4>مكونات العطر</h4><dl>' +
@@ -64,6 +82,7 @@ function renderProductDetail(productId, container) {
           (discount > 0 ? '<span class="product-card__badge">-' + discount + '%</span>' : '') +
         '</div>' +
         '<p class="product-detail__desc">' + product.description + '</p>' +
+        detailHtml +
         notesHtml +
         '<div class="quantity-control">' +
           '<label for="qty">الكمية:</label>' +
@@ -114,18 +133,30 @@ function renderProductDetail(productId, container) {
     if (val < 99) qtyInput.value = val + 1;
   });
 
-  document.getElementById('addToCartBtn').addEventListener('click', function () {
+  function selectedDetail() {
+    var select = document.getElementById('detailOption');
+    if (select) return select.value;
+    if (detailOptions.length === 1) return detailOptions[0];
+    return '';
+  }
+
+  function addCurrentToCart() {
     var qty = parseInt(qtyInput.value, 10) || 1;
-    if (Cart.add(productId, qty)) {
+    var detail = selectedDetail();
+    if (detailOptions.length > 1 && !detail) {
+      showToast('اختر ' + detailLabel + ' أولاً', 'error');
+      return;
+    }
+    if (Cart.add(productId, qty, detail)) {
       showToast('تمت إضافة ' + qty + ' قطعة إلى السلة');
     }
-  });
+  }
+
+  document.getElementById('addToCartBtn').addEventListener('click', addCurrentToCart);
 
   var stickyAddBtn = document.getElementById('stickyAddBtn');
   if (stickyAddBtn) {
-    stickyAddBtn.addEventListener('click', function () {
-      document.getElementById('addToCartBtn').click();
-    });
+    stickyAddBtn.addEventListener('click', addCurrentToCart);
   }
   initStickyCartBar();
   initScrollReveal();

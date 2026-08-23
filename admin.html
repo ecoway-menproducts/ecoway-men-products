@@ -124,6 +124,23 @@
           <label><input type="checkbox" id="fieldActive" checked> يظهر في الموقع (active)</label>
         </div>
 
+        <h3 class="admin-subtitle">الحجم / المقاس (اختياري — مستقل عن التصنيف)</h3>
+        <div class="admin-form-grid">
+          <div class="form-group">
+            <label for="fieldDetailType">نوع التفصيل</label>
+            <select id="fieldDetailType">
+              <option value="none">بدون</option>
+              <option value="volume">حجم (مل)</option>
+              <option value="size">مقاس</option>
+            </select>
+          </div>
+          <div class="form-group" id="detailOptionsGroup" hidden>
+            <label for="fieldDetailOptions">القيمة أو الخيارات</label>
+            <input type="text" id="fieldDetailOptions" placeholder="مثال: 100 مل أو 50 مل|100 مل أو 20×50" dir="rtl">
+            <span class="form-hint">خيار واحد، أو عدة خيارات مفصولة بـ | ليختار المشتري بينها</span>
+          </div>
+        </div>
+
         <h3 class="admin-subtitle">نفحات العطر (اختياري)</h3>
         <div class="admin-form-grid">
           <div class="form-group">

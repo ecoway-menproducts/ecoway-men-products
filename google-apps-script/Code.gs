@@ -49,7 +49,9 @@ var PRODUCTS_SHEET_HEADERS = [
   'active',
   'notes_top',
   'notes_middle',
-  'notes_base'
+  'notes_base',
+  'detailType',
+  'detailOptions'
 ];
 
 var JOIN_SHEET_HEADERS = [
@@ -86,7 +88,9 @@ function doPost(e) {
     var productsText = '';
     if (data.products && data.products.length) {
       productsText = data.products.map(function (p) {
-        return p.name + ' × ' + p.quantity + ' (' + p.total + ' ج.م)';
+        var label = p.name || '';
+        if (p.detail) label += ' (' + p.detail + ')';
+        return label + ' × ' + p.quantity + ' (' + p.total + ' ج.م)';
       }).join(' | ');
     }
 
@@ -215,7 +219,9 @@ function getOrdersSheet() {
 }
 
 function getProductsSheet() {
-  return getOrCreateSheet_(PRODUCTS_SHEET_NAME, PRODUCTS_SHEET_HEADERS);
+  var sheet = getOrCreateSheet_(PRODUCTS_SHEET_NAME, PRODUCTS_SHEET_HEADERS);
+  ensureHeadersAppend_(sheet, PRODUCTS_SHEET_HEADERS);
+  return sheet;
 }
 
 function getOrCreateSheet_(name, headers) {
@@ -233,6 +239,33 @@ function getOrCreateSheet_(name, headers) {
   }
 
   return sheet;
+}
+
+/** يضيف أعمدة ناقصة في صف العناوين دون المساس بالبيانات */
+function ensureHeadersAppend_(sheet, headers) {
+  var lastCol = sheet.getLastColumn();
+  if (lastCol < 1) {
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
+    sheet.setFrozenRows(1);
+    return;
+  }
+
+  var existing = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  var existingNorm = [];
+  for (var i = 0; i < existing.length; i++) {
+    var n = normalizeHeader_(existing[i]);
+    if (n) existingNorm.push(n);
+  }
+
+  for (var h = 0; h < headers.length; h++) {
+    var key = normalizeHeader_(headers[h]);
+    if (existingNorm.indexOf(key) === -1) {
+      var col = existingNorm.length + 1;
+      sheet.getRange(1, col).setValue(headers[h]).setFontWeight('bold');
+      existingNorm.push(key);
+    }
+  }
 }
 
 /**
@@ -284,6 +317,9 @@ function rowToProduct_(headers, row) {
   var notesTop = String(get('notes_top') || '').trim();
   var notesMiddle = String(get('notes_middle') || '').trim();
   var notesBase = String(get('notes_base') || '').trim();
+  var detailType = normalizeDetailType_(get('detailType'));
+  var detailOptions = String(get('detailOptions') || '').trim();
+  if (detailType === 'none') detailOptions = '';
 
   var product = {
     id: id,
@@ -298,6 +334,8 @@ function rowToProduct_(headers, row) {
     notes_top: notesTop,
     notes_middle: notesMiddle,
     notes_base: notesBase,
+    detailType: detailType,
+    detailOptions: detailOptions,
     reviews: []
   };
 
@@ -309,6 +347,12 @@ function rowToProduct_(headers, row) {
   }
 
   return product;
+}
+
+function normalizeDetailType_(value) {
+  var text = String(value || '').trim().toLowerCase();
+  if (text === 'volume' || text === 'size') return text;
+  return 'none';
 }
 
 function normalizeHeader_(value) {
@@ -486,6 +530,8 @@ function productToRow_(p, id, name, imageUrl) {
   var notesTop = p.notes_top || (p.notes && p.notes.top) || '';
   var notesMiddle = p.notes_middle || (p.notes && p.notes.middle) || '';
   var notesBase = p.notes_base || (p.notes && p.notes.base) || '';
+  var detailType = normalizeDetailType_(p.detailType);
+  var detailOptions = detailType === 'none' ? '' : String(p.detailOptions || '').trim();
 
   return [
     id,
@@ -499,7 +545,9 @@ function productToRow_(p, id, name, imageUrl) {
     p.active !== false && p.active !== 'FALSE' && p.active !== 'false',
     String(notesTop).trim(),
     String(notesMiddle).trim(),
-    String(notesBase).trim()
+    String(notesBase).trim(),
+    detailType,
+    detailOptions
   ];
 }
 
@@ -585,7 +633,9 @@ function seedProductsSheet() {
       true,
       'برغموت، ليمون',
       'لافندر، فلفل',
-      'أرز، خشب الصندل'
+      'أرز، خشب الصندل',
+      'volume',
+      '100 مل'
     ],
     [
       'perf-night-king',
@@ -599,7 +649,9 @@ function seedProductsSheet() {
       true,
       'كارداموم، زعفران',
       'ورد، عنبر',
-      'مسك، فانيليا'
+      'مسك، فانيليا',
+      'volume',
+      '50 مل|100 مل'
     ],
     [
       'skin-charcoal-wash',
@@ -613,6 +665,8 @@ function seedProductsSheet() {
       true,
       '',
       '',
+      '',
+      'none',
       ''
     ],
     [
@@ -627,6 +681,8 @@ function seedProductsSheet() {
       true,
       '',
       '',
+      '',
+      'none',
       ''
     ],
     [
@@ -641,6 +697,8 @@ function seedProductsSheet() {
       true,
       '',
       '',
+      '',
+      'none',
       ''
     ]
   ];

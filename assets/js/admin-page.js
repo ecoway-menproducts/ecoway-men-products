@@ -145,6 +145,14 @@
     });
   }
 
+  function syncDetailOptionsVisibility(clearIfHidden) {
+    var type = document.getElementById('fieldDetailType').value;
+    var group = document.getElementById('detailOptionsGroup');
+    var show = type === 'volume' || type === 'size';
+    group.hidden = !show;
+    if (!show && clearIfHidden) document.getElementById('fieldDetailOptions').value = '';
+  }
+
   function openModal(product) {
     pendingImage = null;
     productForm.reset();
@@ -152,6 +160,8 @@
     document.getElementById('fieldActive').checked = true;
     document.getElementById('fieldImageFile').value = '';
     document.getElementById('imagePreviewEmpty').hidden = false;
+    document.getElementById('fieldDetailType').value = 'none';
+    document.getElementById('fieldDetailOptions').value = '';
 
     var preview = document.getElementById('imagePreview');
     preview.hidden = true;
@@ -170,6 +180,8 @@
       document.getElementById('fieldImageUrl').value = product.image || '';
       document.getElementById('fieldInStock').checked = product.inStock === true;
       document.getElementById('fieldActive').checked = product.active === true;
+      document.getElementById('fieldDetailType').value = normalizeDetailType(product.detailType);
+      document.getElementById('fieldDetailOptions').value = product.detailOptions || '';
       document.getElementById('fieldNotesTop').value = product.notes_top || (product.notes && product.notes.top) || '';
       document.getElementById('fieldNotesMiddle').value = product.notes_middle || (product.notes && product.notes.middle) || '';
       document.getElementById('fieldNotesBase').value = product.notes_base || (product.notes && product.notes.base) || '';
@@ -185,6 +197,7 @@
       document.getElementById('fieldImageUrl').value = '';
     }
 
+    syncDetailOptionsVisibility(false);
     productModal.classList.remove('hidden');
   }
 
@@ -240,6 +253,10 @@
 
   function collectFormProduct() {
     var compareAt = document.getElementById('fieldCompareAt').value.trim();
+    var detailType = document.getElementById('fieldDetailType').value;
+    var detailOptions = document.getElementById('fieldDetailOptions').value.trim();
+    if (detailType === 'none') detailOptions = '';
+
     return {
       id: document.getElementById('fieldId').value.trim(),
       name: document.getElementById('fieldName').value.trim(),
@@ -250,6 +267,8 @@
       image: document.getElementById('fieldImageUrl').value.trim(),
       inStock: document.getElementById('fieldInStock').checked,
       active: document.getElementById('fieldActive').checked,
+      detailType: detailType,
+      detailOptions: detailOptions,
       notes_top: document.getElementById('fieldNotesTop').value.trim(),
       notes_middle: document.getElementById('fieldNotesMiddle').value.trim(),
       notes_base: document.getElementById('fieldNotesBase').value.trim()
@@ -343,6 +362,10 @@
       showToast('المعرف يجب أن يكون إنجليزي/أرقام فقط', 'error');
       return;
     }
+    if ((product.detailType === 'volume' || product.detailType === 'size') && !product.detailOptions) {
+      showToast('أدخل قيمة الحجم أو المقاس', 'error');
+      return;
+    }
 
     var btn = document.getElementById('saveProductBtn');
     btn.disabled = true;
@@ -379,6 +402,10 @@
   });
 
   fillCategorySelects();
+
+  document.getElementById('fieldDetailType').addEventListener('change', function () {
+    syncDetailOptionsVisibility(true);
+  });
 
   var existing = getToken();
   if (existing) {

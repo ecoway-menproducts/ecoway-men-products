@@ -3,6 +3,16 @@
  */
 const CART_KEY = 'ecoway_men_cart';
 
+function cartLineKey(productId, detail) {
+  return String(productId || '') + '|' + String(detail || '').trim();
+}
+
+function getCartItemKey(item) {
+  if (!item) return '';
+  if (item.cartKey) return item.cartKey;
+  return cartLineKey(item.id, item.detail);
+}
+
 const Cart = {
   get: function () {
     try {
@@ -19,20 +29,29 @@ const Cart = {
     window.dispatchEvent(new CustomEvent('cartUpdated'));
   },
 
-  add: function (productId, quantity) {
+  add: function (productId, quantity, detail) {
     quantity = quantity || 1;
+    detail = String(detail || '').trim();
     var product = getProductById(productId);
     if (!product || !product.inStock) return false;
 
+    var options = typeof getDetailOptions === 'function' ? getDetailOptions(product) : [];
+    if (options.length === 1 && !detail) detail = options[0];
+    if (options.length > 1 && options.indexOf(detail) === -1) return false;
+
+    var key = cartLineKey(productId, detail);
     var items = this.get();
-    var existing = items.find(function (i) { return i.id === productId; });
+    var existing = items.find(function (i) { return getCartItemKey(i) === key; });
 
     if (existing) {
       existing.quantity += quantity;
     } else {
       items.push({
         id: product.id,
+        cartKey: key,
         name: product.name,
+        detail: detail,
+        detailType: product.detailType || 'none',
         price: product.price,
         image: product.image,
         quantity: quantity
@@ -44,13 +63,13 @@ const Cart = {
     return true;
   },
 
-  updateQuantity: function (productId, quantity) {
+  updateQuantity: function (lineKey, quantity) {
     var items = this.get();
-    var item = items.find(function (i) { return i.id === productId; });
+    var item = items.find(function (i) { return getCartItemKey(i) === lineKey; });
     if (!item) return;
 
     if (quantity <= 0) {
-      this.remove(productId);
+      this.remove(lineKey);
       return;
     }
 
@@ -58,8 +77,8 @@ const Cart = {
     this.save(items);
   },
 
-  remove: function (productId) {
-    var items = this.get().filter(function (i) { return i.id !== productId; });
+  remove: function (lineKey) {
+    var items = this.get().filter(function (i) { return getCartItemKey(i) !== lineKey; });
     this.save(items);
   },
 

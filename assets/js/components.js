@@ -127,6 +127,19 @@ function renderWhatsAppButton() {
 function renderProductCard(product) {
   var discount = getDiscountPercent(product.price, product.compareAt);
   var starsHtml = renderStarsStructure(product.reviews);
+  var detailOptions = getDetailOptions(product);
+  var detailHtml = '';
+  if (detailOptions.length === 1) {
+    detailHtml = '<span class="product-card__detail">' + formatDetailDisplay(product, detailOptions[0]) + '</span>';
+  } else if (detailOptions.length > 1) {
+    detailHtml = '<span class="product-card__detail">' + getDetailTypeLabel(product.detailType) + ': ' + detailOptions.join(' / ') + '</span>';
+  }
+
+  var addBtn = detailOptions.length > 1
+    ? '<a href="' + pagePath('product.html') + '?id=' + product.id + '" class="btn btn--primary btn--sm">اختر ' + getDetailTypeLabel(product.detailType) + '</a>'
+    : '<button class="btn btn--primary btn--sm btn-add-cart" data-id="' + product.id + '"' +
+        (detailOptions.length === 1 ? ' data-detail="' + detailOptions[0].replace(/"/g, '&quot;') + '"' : '') +
+      '>أضف إلى السلة</button>';
 
   return (
     '<article class="product-card product-card--enter" data-product-id="' + product.id + '">' +
@@ -137,6 +150,7 @@ function renderProductCard(product) {
       '<div class="product-card__body">' +
         '<span class="product-card__category">' + getCategoryName(product.category) + '</span>' +
         '<h3 class="product-card__title"><a href="' + pagePath('product.html') + '?id=' + product.id + '">' + product.name + '</a></h3>' +
+        detailHtml +
         starsHtml +
         '<div class="product-card__price">' +
           (product.compareAt && product.compareAt > product.price
@@ -144,7 +158,7 @@ function renderProductCard(product) {
             : '') +
           '<span class="price-current">' + formatPrice(product.price) + '</span>' +
         '</div>' +
-        '<button class="btn btn--primary btn--sm btn-add-cart" data-id="' + product.id + '">أضف إلى السلة</button>' +
+        addBtn +
       '</div>' +
     '</article>'
   );
@@ -223,7 +237,8 @@ function initCommonUI(activePage) {
     if (btn) {
       e.preventDefault();
       var id = btn.dataset.id;
-      if (Cart.add(id, 1)) {
+      var detail = btn.dataset.detail || '';
+      if (Cart.add(id, 1, detail)) {
         showToast('تمت الإضافة إلى السلة');
         btn.textContent = '✓ تمت الإضافة';
         setTimeout(function () { btn.textContent = 'أضف إلى السلة'; }, 1500);
