@@ -267,7 +267,7 @@ function getProductsFromSheet() {
 
 function rowToProduct_(headers, row) {
   var get = function (key) {
-    var index = headers.indexOf(key);
+    var index = headers.indexOf(normalizeHeader_(key));
     return index === -1 ? '' : row[index];
   };
 
@@ -335,6 +335,7 @@ function parseOptionalNumber_(value) {
 }
 
 function parseBoolean_(value, defaultValue) {
+  if (typeof value === 'boolean') return value;
   if (value === '' || value == null) return defaultValue;
   var text = String(value).trim().toLowerCase();
   if (text === 'true' || text === 'yes' || text === '1' || text === 'نعم') return true;

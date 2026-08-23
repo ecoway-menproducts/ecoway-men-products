@@ -168,8 +168,8 @@
       document.getElementById('fieldCompareAt').value = product.compareAt || '';
       document.getElementById('fieldDescription').value = product.description || '';
       document.getElementById('fieldImageUrl').value = product.image || '';
-      document.getElementById('fieldInStock').checked = product.inStock !== false;
-      document.getElementById('fieldActive').checked = product.active !== false;
+      document.getElementById('fieldInStock').checked = product.inStock === true;
+      document.getElementById('fieldActive').checked = product.active === true;
       document.getElementById('fieldNotesTop').value = product.notes_top || (product.notes && product.notes.top) || '';
       document.getElementById('fieldNotesMiddle').value = product.notes_middle || (product.notes && product.notes.middle) || '';
       document.getElementById('fieldNotesBase').value = product.notes_base || (product.notes && product.notes.base) || '';
