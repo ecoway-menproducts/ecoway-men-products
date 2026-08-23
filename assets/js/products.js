@@ -213,8 +213,7 @@ function renderProductsLoadError(container, message) {
   if (!container) return;
   container.innerHTML =
     '<div class="no-results">' +
-      '<p>' + (message || 'تعذر تحميل المنتجات من Google Sheet') + '</p>' +
-      '<p style="margin-top:8px;font-size:0.9rem;color:var(--color-text-muted)">تأكد من نشر Apps Script (New version) ثم حدّث الصفحة.</p>' +
+      '<p>' + (message || 'خطأ في التحميل') + '</p>' +
       '<button type="button" class="btn btn--outline btn--sm mt-16" onclick="location.reload()">إعادة المحاولة</button>' +
     '</div>';
 }
