@@ -2462,10 +2462,18 @@ body:not(.admin-body).is-ready {
 /* ─── Join / Partner form ─── */
 .join-intro {
   max-width: 640px;
-  margin: -8px auto 28px;
+  margin: 0 auto 28px;
+  padding: 16px 20px;
   text-align: center;
-  color: var(--color-text-muted);
-  line-height: 1.7;
+  color: var(--color-header);
+  font-weight: 700;
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.85;
+  background: var(--color-accent-muted);
+  border: 1px solid var(--color-border-gold);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 
 .join-form {
