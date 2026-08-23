@@ -126,7 +126,6 @@ function renderWhatsAppButton() {
 
 function renderProductCard(product) {
   var discount = getDiscountPercent(product.price, product.compareAt);
-  var starsHtml = renderStarsStructure(product.reviews);
   var detailOptions = getDetailOptions(product);
   var detailHtml = '';
   if (detailOptions.length === 1) {
@@ -145,13 +144,12 @@ function renderProductCard(product) {
     '<article class="product-card product-card--enter" data-product-id="' + product.id + '">' +
       (discount > 0 ? '<span class="product-card__badge">-' + discount + '%</span>' : '') +
       '<a href="' + pagePath('product.html') + '?id=' + product.id + '" class="product-card__image">' +
-        '<img src="' + assetPath(product.image) + '" alt="' + product.name + '" loading="lazy" width="300" height="300" onerror="this.onerror=null;this.src=\'' + assetPath('assets/images/placeholder.svg') + '\'">' +
+        '<img src="' + assetPath(product.image) + '" alt="' + product.name + '" loading="lazy" width="300" height="360" onerror="this.onerror=null;this.src=\'' + assetPath('assets/images/placeholder.svg') + '\'">' +
       '</a>' +
       '<div class="product-card__body">' +
         '<span class="product-card__category">' + getCategoryName(product.category) + '</span>' +
         '<h3 class="product-card__title"><a href="' + pagePath('product.html') + '?id=' + product.id + '">' + product.name + '</a></h3>' +
         detailHtml +
-        starsHtml +
         '<div class="product-card__price">' +
           (product.compareAt && product.compareAt > product.price
             ? '<span class="price-compare">' + formatPrice(product.compareAt) + '</span>'

@@ -24,6 +24,7 @@ var ADMIN_TOKEN = '9607330';
 var MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
 var ORDERS_SHEET_HEADERS = [
+  'رقم الطلب',
   'التاريخ',
   'الاسم',
   'الهاتف',
@@ -94,7 +95,10 @@ function doPost(e) {
       }).join(' | ');
     }
 
+    var orderId = generateOrderId_(sheet);
+
     sheet.appendRow([
+      orderId,
       data.date || new Date().toISOString(),
       data.customerName || '',
       data.phone || '',
@@ -108,9 +112,14 @@ function doPost(e) {
       data.paymentMethod || 'COD'
     ]);
 
+    data.orderId = orderId;
     sendOrderEmail(data, productsText);
 
-    return jsonResponse({ success: true, message: 'تم استلام الطلب' });
+    return jsonResponse({
+      success: true,
+      message: 'تم استلام الطلب',
+      orderId: orderId
+    });
   } catch (err) {
     return jsonResponse({ success: false, error: err.message });
   }
@@ -215,7 +224,63 @@ function doGet(e) {
 }
 
 function getOrdersSheet() {
-  return getOrCreateSheet_(ORDERS_SHEET_NAME, ORDERS_SHEET_HEADERS);
+  var sheet = getOrCreateSheet_(ORDERS_SHEET_NAME, ORDERS_SHEET_HEADERS);
+  ensureOrderIdColumn_(sheet);
+  return sheet;
+}
+
+/**
+ * يضمن وجود عمود «رقم الطلب» في العمود الأول للشيت الحالي
+ */
+function ensureOrderIdColumn_(sheet) {
+  var lastCol = sheet.getLastColumn();
+  if (lastCol < 1) {
+    sheet.getRange(1, 1, 1, ORDERS_SHEET_HEADERS.length)
+      .setValues([ORDERS_SHEET_HEADERS])
+      .setFontWeight('bold');
+    sheet.setFrozenRows(1);
+    return;
+  }
+
+  var headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  var hasOrderId = false;
+  for (var i = 0; i < headers.length; i++) {
+    if (String(headers[i] || '').trim() === 'رقم الطلب') {
+      hasOrderId = true;
+      break;
+    }
+  }
+
+  if (!hasOrderId) {
+    sheet.insertColumnBefore(1);
+    sheet.getRange(1, 1).setValue('رقم الطلب').setFontWeight('bold');
+  }
+}
+
+/**
+ * EW-YYMMDD-#### — تسلسل يومي بتوقيت القاهرة
+ */
+function generateOrderId_(sheet) {
+  var tz = 'Africa/Cairo';
+  var yymmdd = Utilities.formatDate(new Date(), tz, 'yyMMdd');
+  var prefix = 'EW-' + yymmdd + '-';
+  var maxSeq = 0;
+  var lastRow = sheet.getLastRow();
+
+  if (lastRow >= 2) {
+    var ids = sheet.getRange(2, 1, lastRow, 1).getValues();
+    for (var i = 0; i < ids.length; i++) {
+      var id = String(ids[i][0] || '').trim();
+      if (id.indexOf(prefix) === 0) {
+        var seq = parseInt(id.substring(prefix.length), 10);
+        if (!isNaN(seq) && seq > maxSeq) maxSeq = seq;
+      }
+    }
+  }
+
+  var next = maxSeq + 1;
+  var seqStr = ('0000' + next).slice(-4);
+  return prefix + seqStr;
 }
 
 function getProductsSheet() {
@@ -592,9 +657,10 @@ function uploadProductImage_(productId, base64Data, mimeType, fileName) {
 }
 
 function sendOrderEmail(data, productsText) {
-  var subject = 'طلب جديد — Ecoway Men Products';
+  var subject = 'طلب جديد ' + (data.orderId ? data.orderId + ' ' : '') + '— Ecoway Men Products';
   var body =
     'طلب جديد من الموقع\n\n' +
+    'رقم الطلب: ' + (data.orderId || '—') + '\n' +
     'الاسم: ' + (data.customerName || '') + '\n' +
     'الهاتف: ' + (data.phone || '') + '\n' +
     'المحافظة: ' + (data.governorate || '') + '\n' +

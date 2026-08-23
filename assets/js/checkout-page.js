@@ -116,21 +116,54 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetch(SITE_CONFIG.orderEndpoint, {
       method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
+      redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(orderData)
     })
-    .then(function () {
-      Cart.clear();
-      layoutEl.classList.add('hidden');
-      successEl.classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    .then(function (res) {
+      return res.text();
     })
-    .catch(function () {
-      Cart.clear();
-      layoutEl.classList.add('hidden');
-      successEl.classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    .then(function (text) {
+      var data = {};
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        data = {};
+      }
+
+      if (data.success === false) {
+        throw new Error(data.error || 'تعذر تسجيل الطلب');
+      }
+
+      showOrderSuccess(data.orderId || '');
+    })
+    .catch(function (err) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'تأكيد الطلب';
+      showToast(err.message || 'تعذر إرسال الطلب. حاول مرة أخرى.', 'error');
     });
   });
+
+  function showOrderSuccess(orderId) {
+    Cart.clear();
+    layoutEl.classList.add('hidden');
+    successEl.classList.remove('hidden');
+
+    var idWrap = document.getElementById('orderSuccessId');
+    var idValue = document.getElementById('orderIdValue');
+    var waBtn = document.getElementById('orderWhatsAppBtn');
+
+    if (orderId) {
+      idValue.textContent = orderId;
+      idWrap.hidden = false;
+      if (waBtn) {
+        var msg = 'مرحباً، أتابع طلبي رقم ' + orderId;
+        waBtn.href = 'https://wa.me/' + SITE_CONFIG.whatsappIntl + '?text=' + encodeURIComponent(msg);
+      }
+    } else {
+      idWrap.hidden = true;
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 });

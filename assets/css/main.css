@@ -1183,13 +1183,13 @@ body.drawer-open { overflow: hidden; }
 }
 
 .product-card__image {
-  aspect-ratio: 1;
+  aspect-ratio: 5 / 6;
   overflow: hidden;
   background: var(--color-surface-warm);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 10px;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -1834,6 +1834,22 @@ body.drawer-open { overflow: hidden; }
   font-size: 1.5rem;
   color: var(--color-header);
   margin-bottom: 12px;
+}
+
+.order-success__id {
+  display: inline-block;
+  margin: 0 0 16px;
+  padding: 10px 16px;
+  background: var(--color-surface-warm, #f5f2ec);
+  border: 1px solid var(--color-border-gold, #d4c4a8);
+  border-radius: var(--radius-sm);
+  font-size: 1.05rem;
+  color: var(--color-header);
+}
+
+.order-success__id strong {
+  letter-spacing: 0.04em;
+  margin-inline-start: 6px;
 }
 
 .order-success p { color: var(--color-text-muted); margin-bottom: 24px; }
