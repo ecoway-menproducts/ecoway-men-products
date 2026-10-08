@@ -39,6 +39,23 @@ const SITE_CONFIG = {
   window.location.replace(base === './' ? 'join.html' : base + 'join.html');
 })();
 
+/** أثناء الإغلاق المؤقت: إخفاء كلمة Men من الاسم الظاهر والعنوان */
+(function hideMenBrandTemporarily() {
+  if (!SITE_CONFIG.siteClosedTemporarily) return;
+  SITE_CONFIG.name = String(SITE_CONFIG.name || '')
+    .replace(/\bMen\b/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+  if (typeof document !== 'undefined' && document.title) {
+    document.title = String(document.title)
+      .replace(/\bMen\b/gi, '')
+      .replace(/\s{2,}/g, ' ')
+      .replace(/\s+\|/g, ' |')
+      .replace(/\|\s+/g, '| ')
+      .trim();
+  }
+})();
+
 const GOVERNORATES = [
   'القاهرة', 'الجيزة', 'الإسكندرية', 'الدقهلية', 'البحر الأحمر', 'البحيرة',
   'الفيوم', 'الغربية', 'الإسماعيلية', 'المنوفية', 'المنيا', 'القليوبية',
