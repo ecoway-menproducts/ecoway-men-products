@@ -31,8 +31,7 @@ function renderHeader(activePage) {
       '</div>'
     );
   var drawerLinks = closed
-    ? '<a href="' + pagePath('join.html') + '">ابدأ مع Ecoway</a>' +
-      '<a href="https://wa.me/' + SITE_CONFIG.whatsappIntl + '" target="_blank" rel="noopener">واتساب</a>'
+    ? '<a href="' + pagePath('join.html') + '">ابدأ مع Ecoway</a>'
     : (
       '<a href="' + pagePath('about.html') + '">من نحن</a>' +
       '<a href="' + pagePath('contact.html') + '">اتصل بنا</a>' +
@@ -164,6 +163,7 @@ function renderMobileBottomNav(activePage) {
 }
 
 function renderWhatsAppButton() {
+  if (SITE_CONFIG.siteClosedTemporarily) return '';
   return (
     '<a href="https://wa.me/' + SITE_CONFIG.whatsappIntl + '?text=' + encodeURIComponent('مرحباً، أريد الاستفسار عن منتجات Ecoway Men') + '" ' +
       'class="whatsapp-float" target="_blank" rel="noopener" aria-label="تواصل عبر واتساب">' +

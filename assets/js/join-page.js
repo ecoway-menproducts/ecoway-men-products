@@ -6,24 +6,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var birthYearSelect = document.getElementById('birthYear');
   var ageInput = document.getElementById('age');
   var governorateSelect = document.getElementById('governorate');
-  var preferredTimeSelect = document.getElementById('preferredTime');
   var bioGroup = document.getElementById('experienceBioGroup');
   var bioField = document.getElementById('experienceBio');
   var currentYear = new Date().getFullYear();
-
-  var CONTACT_TIMES = [
-    'من 10 ص إلى 11 ص',
-    'من 11 ص إلى 12 م',
-    'من 12 م إلى 1 م',
-    'من 1 م إلى 2 م',
-    'من 2 م إلى 3 م',
-    'من 3 م إلى 4 م',
-    'من 4 م إلى 5 م',
-    'من 5 م إلى 6 م',
-    'من 6 م إلى 7 م',
-    'من 7 م إلى 8 م',
-    'من 8 م إلى 9 م'
-  ];
 
   for (var age = 18; age <= 60; age++) {
     var year = currentYear - age;
@@ -38,13 +23,6 @@ document.addEventListener('DOMContentLoaded', function () {
     opt.value = gov;
     opt.textContent = gov;
     governorateSelect.appendChild(opt);
-  });
-
-  CONTACT_TIMES.forEach(function (slot) {
-    var opt = document.createElement('option');
-    opt.value = slot;
-    opt.textContent = slot;
-    preferredTimeSelect.appendChild(opt);
   });
 
   function updateAge() {
@@ -156,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
       governorate: form.governorate.value,
       hasMarketingExp: expSelected.value === 'yes' ? 'نعم' : 'لا',
       experienceBio: expSelected.value === 'yes' ? bioField.value.trim() : '',
-      preferredTimes: preferredTimeSelect.value,
+      preferredTimes: '',
       notes: form.notes.value.trim(),
       date: new Date().toISOString()
     };
