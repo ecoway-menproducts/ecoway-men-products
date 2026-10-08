@@ -3,18 +3,56 @@
  */
 function renderHeader(activePage) {
   var cartCount = Cart.getCount();
+  var closed = !!SITE_CONFIG.siteClosedTemporarily;
+  var homeHref = closed ? pagePath('join.html') : pagePath('index.html');
+  var navHtml = closed
+    ? '<a href="' + pagePath('join.html') + '" class="nav-join' + (activePage === 'join' ? ' active' : '') + '">ابدأ مع Ecoway</a>'
+    : (
+      '<a href="' + pagePath('index.html') + '" class="' + (activePage === 'home' ? 'active' : '') + '">الرئيسية</a>' +
+      '<a href="' + pagePath('products.html') + '" class="' + (activePage === 'products' ? 'active' : '') + '">المنتجات</a>' +
+      '<a href="' + pagePath('about.html') + '" class="' + (activePage === 'about' ? 'active' : '') + '">من نحن</a>' +
+      '<a href="' + pagePath('contact.html') + '" class="' + (activePage === 'contact' ? 'active' : '') + '">اتصل بنا</a>' +
+      '<a href="' + pagePath('join.html') + '" class="nav-join' + (activePage === 'join' ? ' active' : '') + '">ابدأ مع Ecoway</a>'
+    );
+  var announceShort = closed
+    ? '🤝 التسجيل مفتوح الآن — ابدأ مع Ecoway'
+    : '🚚 توصيل ' + SITE_CONFIG.deliveryDays + ' — دفع عند الاستلام';
+  var announceFull = closed
+    ? '🤝 الموقع في وضع التسجيل فقط حالياً — ابدأ رحلتك مع Ecoway'
+    : '🚚 توصيل خلال ' + SITE_CONFIG.deliveryDays + ' — الدفع عند الاستلام (توصيل مجاني للطلبات أكثر من ' + SITE_CONFIG.freeShippingMin.toLocaleString('ar-EG') + ' جنيه)';
+  var actionsHtml = closed
+    ? ''
+    : (
+      '<div class="header__actions">' +
+        '<a href="' + pagePath('cart.html') + '" class="header__cart header__cart--desktop" aria-label="سلة التسوق">' +
+          '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>' +
+          '<span class="header__cart-badge" data-cart-count style="display:' + (cartCount > 0 ? 'flex' : 'none') + '">' + cartCount + '</span>' +
+        '</a>' +
+      '</div>'
+    );
+  var drawerLinks = closed
+    ? '<a href="' + pagePath('join.html') + '">ابدأ مع Ecoway</a>' +
+      '<a href="https://wa.me/' + SITE_CONFIG.whatsappIntl + '" target="_blank" rel="noopener">واتساب</a>'
+    : (
+      '<a href="' + pagePath('about.html') + '">من نحن</a>' +
+      '<a href="' + pagePath('contact.html') + '">اتصل بنا</a>' +
+      '<a href="' + pagePath('join.html') + '">ابدأ مع Ecoway</a>' +
+      '<a href="' + pagePath('shipping-policy.html') + '">سياسة الشحن</a>' +
+      '<a href="' + pagePath('return-policy.html') + '">سياسة الاسترجاع</a>'
+    );
+
   return (
     '<header class="header">' +
       '<div class="header__announce">' +
-        '<span class="header__announce-short">🚚 توصيل ' + SITE_CONFIG.deliveryDays + ' — دفع عند الاستلام</span>' +
-        '<span class="header__announce-full">🚚 توصيل خلال ' + SITE_CONFIG.deliveryDays + ' — الدفع عند الاستلام (توصيل مجاني للطلبات أكثر من ' + SITE_CONFIG.freeShippingMin.toLocaleString('ar-EG') + ' جنيه)</span>' +
+        '<span class="header__announce-short">' + announceShort + '</span>' +
+        '<span class="header__announce-full">' + announceFull + '</span>' +
       '</div>' +
       '<div class="header__main container">' +
         '<div class="header__brand">' +
           '<button class="header__menu-btn" id="menuToggle" aria-label="فتح القائمة" aria-expanded="false" aria-controls="mobileNav">' +
             '<span></span><span></span><span></span>' +
           '</button>' +
-          '<a href="' + pagePath('index.html') + '" class="header__logo" aria-label="' + SITE_CONFIG.name + '">' +
+          '<a href="' + homeHref + '" class="header__logo" aria-label="' + SITE_CONFIG.name + '">' +
             '<span class="header__logo-animated" aria-hidden="true">' +
               '<span class="logo-typed"></span>' +
               '<span class="logo-cursor"></span>' +
@@ -23,18 +61,9 @@ function renderHeader(activePage) {
           '</a>' +
         '</div>' +
         '<nav class="header__nav" aria-label="التنقل الرئيسي">' +
-          '<a href="' + pagePath('index.html') + '" class="' + (activePage === 'home' ? 'active' : '') + '">الرئيسية</a>' +
-          '<a href="' + pagePath('products.html') + '" class="' + (activePage === 'products' ? 'active' : '') + '">المنتجات</a>' +
-          '<a href="' + pagePath('about.html') + '" class="' + (activePage === 'about' ? 'active' : '') + '">من نحن</a>' +
-          '<a href="' + pagePath('contact.html') + '" class="' + (activePage === 'contact' ? 'active' : '') + '">اتصل بنا</a>' +
-          '<a href="' + pagePath('join.html') + '" class="nav-join' + (activePage === 'join' ? ' active' : '') + '">ابدأ مع Ecoway</a>' +
+          navHtml +
         '</nav>' +
-        '<div class="header__actions">' +
-          '<a href="' + pagePath('cart.html') + '" class="header__cart header__cart--desktop" aria-label="سلة التسوق">' +
-            '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>' +
-            '<span class="header__cart-badge" data-cart-count style="display:' + (cartCount > 0 ? 'flex' : 'none') + '">' + cartCount + '</span>' +
-          '</a>' +
-        '</div>' +
+        actionsHtml +
       '</div>' +
     '</header>' +
     '<div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop" aria-hidden="true"></div>' +
@@ -43,41 +72,49 @@ function renderHeader(activePage) {
         '<span class="mobile-drawer__title">القائمة</span>' +
         '<button class="mobile-drawer__close" id="menuClose" aria-label="إغلاق القائمة">&times;</button>' +
       '</div>' +
-      '<a href="' + pagePath('about.html') + '">من نحن</a>' +
-      '<a href="' + pagePath('contact.html') + '">اتصل بنا</a>' +
-      '<a href="' + pagePath('join.html') + '">ابدأ مع Ecoway</a>' +
-      '<a href="' + pagePath('shipping-policy.html') + '">سياسة الشحن</a>' +
-      '<a href="' + pagePath('return-policy.html') + '">سياسة الاسترجاع</a>' +
+      drawerLinks +
     '</nav>'
   );
 }
 
 function renderFooter() {
+  var closed = !!SITE_CONFIG.siteClosedTemporarily;
+  var quickLinks = closed
+    ? '<a href="' + pagePath('join.html') + '">ابدأ مع Ecoway</a>'
+    : (
+      '<a href="' + pagePath('products.html') + '">جميع المنتجات</a>' +
+      '<a href="' + pagePath('about.html') + '">من نحن</a>' +
+      '<a href="' + pagePath('contact.html') + '">اتصل بنا</a>' +
+      '<a href="' + pagePath('join.html') + '">ابدأ مع Ecoway</a>' +
+      '<a href="' + pagePath('cart.html') + '">سلة التسوق</a>'
+    );
+  var policyLinks = closed
+    ? ''
+    : (
+      '<div class="footer__links">' +
+        '<h4>السياسات</h4>' +
+        '<a href="' + pagePath('shipping-policy.html') + '">سياسة الشحن</a>' +
+        '<a href="' + pagePath('return-policy.html') + '">سياسة الاسترجاع</a>' +
+      '</div>'
+    );
+
   return (
     '<footer class="footer">' +
       '<div class="container footer__grid">' +
         '<div class="footer__brand">' +
           '<h3>' + SITE_CONFIG.name + '</h3>' +
-          '<p>' + SITE_CONFIG.tagline + '</p>' +
+          '<p>' + (closed ? 'التسجيل مفتوح حالياً — ابدأ مع Ecoway' : SITE_CONFIG.tagline) + '</p>' +
           '<div class="footer__trust">' +
-            '<span>✓ توصيل سريع</span>' +
-            '<span>✓ دفع آمن عند الاستلام</span>' +
-            '<span>✓ دعم واتساب</span>' +
+            (closed
+              ? '<span>✓ تسجيل سريع</span><span>✓ تواصل واتساب</span>'
+              : '<span>✓ توصيل سريع</span><span>✓ دفع آمن عند الاستلام</span><span>✓ دعم واتساب</span>') +
           '</div>' +
         '</div>' +
         '<div class="footer__links">' +
           '<h4>روابط سريعة</h4>' +
-          '<a href="' + pagePath('products.html') + '">جميع المنتجات</a>' +
-          '<a href="' + pagePath('about.html') + '">من نحن</a>' +
-          '<a href="' + pagePath('contact.html') + '">اتصل بنا</a>' +
-          '<a href="' + pagePath('join.html') + '">ابدأ مع Ecoway</a>' +
-          '<a href="' + pagePath('cart.html') + '">سلة التسوق</a>' +
+          quickLinks +
         '</div>' +
-        '<div class="footer__links">' +
-          '<h4>السياسات</h4>' +
-          '<a href="' + pagePath('shipping-policy.html') + '">سياسة الشحن</a>' +
-          '<a href="' + pagePath('return-policy.html') + '">سياسة الاسترجاع</a>' +
-        '</div>' +
+        policyLinks +
         '<div class="footer__contact">' +
           '<h4>تواصل معنا</h4>' +
           '<a href="mailto:' + SITE_CONFIG.email + '">' + SITE_CONFIG.email + '</a>' +
@@ -92,6 +129,17 @@ function renderFooter() {
 }
 
 function renderMobileBottomNav(activePage) {
+  if (SITE_CONFIG.siteClosedTemporarily) {
+    return (
+      '<nav class="mobile-nav" aria-label="تنقل سفلي">' +
+        '<a href="' + pagePath('join.html') + '" class="mobile-nav__join' + (activePage === 'join' ? ' active' : '') + '">' +
+          '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' +
+          '<span>ابدأ مع Ecoway</span>' +
+        '</a>' +
+      '</nav>'
+    );
+  }
+
   return (
     '<nav class="mobile-nav" aria-label="تنقل سفلي">' +
       '<a href="' + pagePath('index.html') + '" class="' + (activePage === 'home' ? 'active' : '') + '">' +

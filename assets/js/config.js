@@ -14,6 +14,8 @@ const SITE_CONFIG = {
   deliveryDays: '4–7 أيام',
   paymentMethod: 'الدفع عند الاستلام (COD)',
   year: new Date().getFullYear(),
+  /** true = إغلاق مؤقت للمتجر؛ تبقى join.html (وadmin) فقط */
+  siteClosedTemporarily: true,
   // رابط Google Apps Script — الطلبات (POST) والمنتجات (?action=products)
   orderEndpoint: 'https://script.google.com/macros/s/AKfycbzpz_o0cZ4s_zFLvNeMku9lQmlOzZIb9hWS42kD67hTgeRMY7AH_htxsZH0gjeNWCDqsg/exec',
   // اختياري — يُشتق تلقائياً من orderEndpoint إن تُرك فارغاً
@@ -26,6 +28,16 @@ const SITE_CONFIG = {
     return './';
   })()
 };
+
+(function enforceSiteClosedGate() {
+  if (!SITE_CONFIG.siteClosedTemporarily) return;
+  var path = (window.location.pathname || '').toLowerCase();
+  var file = path.split('/').pop() || '';
+  if (!file || file.indexOf('.') === -1) file = 'index.html';
+  if (file === 'join.html' || file === 'admin.html') return;
+  var base = SITE_CONFIG.basePath;
+  window.location.replace(base === './' ? 'join.html' : base + 'join.html');
+})();
 
 const GOVERNORATES = [
   'القاهرة', 'الجيزة', 'الإسكندرية', 'الدقهلية', 'البحر الأحمر', 'البحيرة',
